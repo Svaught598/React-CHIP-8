@@ -1,12 +1,13 @@
 import { FC, useRef } from "react";
 import { Theme } from "../types";
+import { useTheme } from "../contexts/themeContext";
 
 type Props = {
   pixelBuffer: number[];
-  theme: Theme;
 }
 
-export const Canvas: FC<Props> = ({ pixelBuffer, theme }) => {
+export const Canvas: FC<Props> = ({ pixelBuffer }) => {
+  const { theme } = useTheme();
   const canvas = useRef<HTMLCanvasElement>(null);
   const ctx = canvas.current?.getContext('2d');
   ctx?.renderPixels(pixelBuffer, theme);
