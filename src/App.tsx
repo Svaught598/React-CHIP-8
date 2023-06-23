@@ -5,24 +5,17 @@ import { ThemeSelector } from './components/ThemeSelector'
 import { ThemeProvider } from './contexts/themeContext'
 import { Header } from './components/Header'
 import { EmulationProvider } from './contexts/emulationContext'
+import { RomSelector } from './components/RomSelector'
 
 function App() {
-  const [pixels, setPixels] = useState<number[]>([])
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const newPixels = Array.from({ length: 2048 }, () => Math.floor(Math.random() * 2));
-      setPixels(newPixels);
-    }, 1000)
-    return () => clearInterval(interval)
-  }, [])
 
   return (
     <EmulationProvider>
       <ThemeProvider>
         <Header />
+        <RomSelector />
         <ThemeSelector />
-        <Canvas pixelBuffer={ pixels ?? [] } />
+        <Canvas />
       </ThemeProvider>
     </EmulationProvider>
   )

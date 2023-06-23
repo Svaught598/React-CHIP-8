@@ -19,8 +19,6 @@ export type NamedTheme = {
   theme: Theme;
 }
 
-type KeyValue =  typeof KeyMapping[keyof typeof KeyMapping];
-
 export class EmulatorState {
   memory = new Array(4096).fill(0);
   stack =  new Array(16).fill(0);
@@ -32,5 +30,27 @@ export class EmulatorState {
   pixelBuffer = new Array(64 * 32).fill(0);
   drawFlag = false;
   indexRegister = 0;
-  keyPressed?: KeyValue;
+  keyPressed: number[] = new Array(16).fill(undefined);
+  paused = true;
+
+  reset() {
+    this.memory = new Array(4096).fill(0);
+    this.stack =  new Array(16).fill(0);
+    this.vRegisters = new Array(16).fill(0);
+    this.soundTimer = 0;
+    this.delayTimer = 0;
+    this.programCounter = 512;
+    this.stackPointer = 0;
+    this.pixelBuffer = new Array(64 * 32).fill(0);
+    this.drawFlag = false;
+    this.indexRegister = 0;
+    this.keyPressed = new Array(16).fill(undefined);
+    this.paused = true;
+  }
+
+  loadRom(rom: number[]) {
+    rom.forEach((byte, index) => {
+      this.memory[index + 512] = byte;
+    })
+  }
 }

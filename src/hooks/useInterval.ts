@@ -1,7 +1,10 @@
 import { useEffect, useRef } from "react";
 
-
-export const useInterval = (callback: () => void, delay: number | null) => {
+export const usePausableInterval = (
+  callback: () => void, 
+  delay: number | null, 
+  paused: boolean,
+) => {
   const savedCallback = useRef<() => void>(() => null);
 
   useEffect(() => {
@@ -10,9 +13,9 @@ export const useInterval = (callback: () => void, delay: number | null) => {
 
   useEffect(() => {
     const tick = () => savedCallback.current();
-    if (delay !== null) {
+    if (delay !== null && !paused) {
       const interval = setInterval(tick, delay);
       return () => clearInterval(interval);
     }
-  }, [delay]);
+  }, [delay, paused]);
 }

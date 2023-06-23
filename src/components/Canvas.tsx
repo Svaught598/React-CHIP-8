@@ -1,18 +1,27 @@
 import { FC, useRef } from "react";
 import { Theme } from "../types";
 import { useTheme } from "../contexts/themeContext";
+import { useEmulationContext } from "../contexts/emulationContext";
 
-type Props = {
-  pixelBuffer: number[];
-}
-
-export const Canvas: FC<Props> = ({ pixelBuffer }) => {
+export const Canvas: FC = () => {
   const { theme } = useTheme();
   const canvas = useRef<HTMLCanvasElement>(null);
   const ctx = canvas.current?.getContext('2d');
-  ctx?.renderPixels(pixelBuffer, theme);
+  const { emulatorState, setPaused } = useEmulationContext();
+  ctx?.renderPixels(emulatorState.pixelBuffer, theme);
 
-  return <canvas ref={canvas} width={640} height={320} />
+  return (
+  <>
+    <canvas ref={canvas} width={640} height={320} />
+    <button 
+      className="bg-zinc-700 py-2 px-8 rounded-md my-2"
+      onClick={() => setPaused(isPaused => !isPaused)}
+    >
+      Toggle Pause
+    </button>
+  </>
+  )
+
 }
 
 CanvasRenderingContext2D.prototype.renderPixels =
