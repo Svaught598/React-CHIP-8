@@ -118,13 +118,16 @@ export const xorVxVy = (opcode: number, state: EmulatorState): void => {
 export const addVxVy = (opcode: number, state: EmulatorState): void => {
   const x = (opcode & 0x0F00) >> 8; 
   const y = (opcode & 0x00F0) >> 4;
-  const sum = state.vRegisters[x] + state.vRegisters[y];
-  if (sum > 255) {
+  const vx = state.vRegisters[x];
+  const vy = state.vRegisters[y];
+  state.vRegisters[x] = (vx + vy) & 0xFF;
+
+  // must happen last since vx could be vf
+  if ((vx + vy) > 0xFF) {
     state.vRegisters[0xF] = 1;
   } else {
     state.vRegisters[0xF] = 0;
   }
-  state.vRegisters[x] = sum & 0xFF;
   state.programCounter += 2;
 }
 
@@ -132,12 +135,16 @@ export const addVxVy = (opcode: number, state: EmulatorState): void => {
 export const subVxVy = (opcode: number, state: EmulatorState): void => {
   const x = (opcode & 0x0F00) >> 8; 
   const y = (opcode & 0x00F0) >> 4;
-  if (state.vRegisters[x] > state.vRegisters[y]) {
+  const vx = state.vRegisters[x];
+  const vy = state.vRegisters[y];
+  state.vRegisters[x] = (vx - vy) & 0xFF;
+
+  // must happen last since vx could be vf
+  if (vx > vy) {
     state.vRegisters[0xF] = 1;
   } else {
     state.vRegisters[0xF] = 0;
   }
-  state.vRegisters[x] = (state.vRegisters[x] - state.vRegisters[y]) & 0xFF;
   state.programCounter += 2;
 }
 
@@ -145,8 +152,9 @@ export const subVxVy = (opcode: number, state: EmulatorState): void => {
 export const shrVxVy = (opcode: number, state: EmulatorState): void => {
   const x = (opcode & 0x0F00) >> 8; 
   const y = (opcode & 0x00F0) >> 4;
-  state.vRegisters[0xF] = state.vRegisters[x] & 0x1;
-  state.vRegisters[x] = (state.vRegisters[x] >> 1) & 0xFF;
+  const vx = state.vRegisters[x];
+  state.vRegisters[x] = (vx >> 1) & 0xFF;
+  state.vRegisters[0xF] = vx & 0x1;
   state.programCounter += 2;
 }
 
@@ -155,12 +163,16 @@ export const shrVxVy = (opcode: number, state: EmulatorState): void => {
 export const subnVxVy = (opcode: number, state: EmulatorState): void => {
   const x = (opcode & 0x0F00) >> 8; 
   const y = (opcode & 0x00F0) >> 4;
-  if (state.vRegisters[y] > state.vRegisters[x]) {
+  const vx = state.vRegisters[x];
+  const vy = state.vRegisters[y];
+  state.vRegisters[x] = (vy - vx) & 0xFF;
+
+  // must happen last since vx could be vf
+  if (vy > vx) {
     state.vRegisters[0xF] = 1;
   } else {
     state.vRegisters[0xF] = 0;
   }
-  state.vRegisters[x] = (state.vRegisters[y] - state.vRegisters[x]) & 0xFF;
   state.programCounter += 2;
 }
 
@@ -168,8 +180,9 @@ export const subnVxVy = (opcode: number, state: EmulatorState): void => {
 export const shlVxVy = (opcode: number, state: EmulatorState): void => {
   const x = (opcode & 0x0F00) >> 8; 
   const y = (opcode & 0x00F0) >> 4;
-  state.vRegisters[0xF] = state.vRegisters[x] >> 7;
-  state.vRegisters[x] = (state.vRegisters[x] << 1) & 0xFF;
+  const vx = state.vRegisters[x];
+  state.vRegisters[x] = (vx << 1) & 0xFF;
+  state.vRegisters[0xF] = vx >> 7;
   state.programCounter += 2;
 }
 
