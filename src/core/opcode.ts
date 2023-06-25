@@ -322,10 +322,6 @@ export const processOpcode = (state: EmulatorState): EmulatorState => {
   const thirdNibble = (opcode & 0x00F0) >> 4;
   const fourthNibble = opcode & 0x000F;
 
-  const firstByte = (opcode & 0xFF00) >> 8;
-  const secondByte = opcode & 0x00FF;
-  console.log(firstByte.toHex(), secondByte.toHex())
-
   if (firstNibble.toHex() === '0') {
     if (fourthNibble.toHex() === '0') {
       cls(opcode, state)
@@ -436,5 +432,7 @@ export const processOpcode = (state: EmulatorState): EmulatorState => {
       ldVxI(opcode, state)
     }
   }
+
+  state.keyPressed = new Array(16).fill(0);
   return state;
 }

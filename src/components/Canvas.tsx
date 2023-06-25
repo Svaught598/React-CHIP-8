@@ -21,7 +21,6 @@ export const Canvas: FC = () => {
     </button>
   </>
   )
-
 }
 
 CanvasRenderingContext2D.prototype.renderPixels =

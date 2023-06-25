@@ -69,3 +69,6 @@ export const KeyMapping = {
   'c': 0xB,
   'v': 0xF,
 } as const;
+
+export const CLOCK_FREQ = 500;
+export const CLOCK_INTERVAL = 1000 / CLOCK_FREQ;
