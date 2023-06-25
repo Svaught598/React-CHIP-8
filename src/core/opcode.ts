@@ -19,8 +19,8 @@ export const cls = (opcode: number, state: EmulatorState): void => {
 
 // 00EE - RET
 export const ret = (opcode: number, state: EmulatorState): void => {
-  state.stackPointer -= 1;
   state.programCounter = state.stack[state.stackPointer];
+  state.stackPointer -= 1;
 }
 
 // 1nnn - JP addr
@@ -30,8 +30,8 @@ export const jp = (opcode: number, state: EmulatorState): void => {
 
 // 2nnn - CALL addr
 export const call = (opcode: number, state: EmulatorState): void => {
-  state.stack[state.stackPointer] = state.programCounter + 2;
   state.stackPointer += 1;
+  state.stack[state.stackPointer] = state.programCounter + 2;
   state.programCounter = opcode & 0x0FFF;
 }
 
@@ -151,6 +151,7 @@ export const shrVxVy = (opcode: number, state: EmulatorState): void => {
 }
 
 // 8xy7 - SUBN Vx, Vy
+// 8xy7 - vX = vY - vX
 export const subnVxVy = (opcode: number, state: EmulatorState): void => {
   const x = (opcode & 0x0F00) >> 8; 
   const y = (opcode & 0x00F0) >> 4;
@@ -159,7 +160,7 @@ export const subnVxVy = (opcode: number, state: EmulatorState): void => {
   } else {
     state.vRegisters[0xF] = 0;
   }
-  state.vRegisters[x] = state.vRegisters[y] - state.vRegisters[x];
+  state.vRegisters[x] = (state.vRegisters[y] - state.vRegisters[x]) & 0xFF;
   state.programCounter += 2;
 }
 
@@ -321,6 +322,7 @@ export const processOpcode = (state: EmulatorState): EmulatorState => {
   const firstNibble = (opcode & 0xF000) >> 12;
   const thirdNibble = (opcode & 0x00F0) >> 4;
   const fourthNibble = opcode & 0x000F;
+  console.log('%copcode.ts line:324 opcode.toHex()', 'color: #26bfa5;', opcode.toHex());
 
   if (firstNibble.toHex() === '0') {
     if (fourthNibble.toHex() === '0') {

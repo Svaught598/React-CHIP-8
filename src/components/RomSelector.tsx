@@ -2,6 +2,8 @@ import { ChangeEvent, FC, useRef, useState } from "react";
 import { useEmulationContext } from "../contexts/emulationContext";
 
 const ROM_LIST = [
+  "TEST",
+  "TEST_FLAGS",
   "15PUZZLE",
   "BLINKY",
   "BLITZ",
@@ -21,7 +23,6 @@ const ROM_LIST = [
   "SYZYGY",
   "TANK",
   "TETRIS",
-  "TEST",
   "TICTAC",
   "UFO",
   "VBRIX",
