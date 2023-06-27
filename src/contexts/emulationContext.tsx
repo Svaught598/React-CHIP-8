@@ -1,9 +1,9 @@
-import { FC, ReactNode, createContext, useCallback, useContext, useState } from "react";
+import { FC, ReactNode, createContext, useContext, useState } from "react";
 import { EmulatorState } from "../types";
 import { useInterval } from "../hooks/useInterval";
-import { processOpcode } from "../core/opcode";
 import { useChipKeyBoard } from "../hooks/useChipKeyBoard";
 import { CLOCK_INTERVAL } from "../constants";
+import { emulatorFromRom, processOpcode } from "../core/emulator";
 
 type EmulationContextType = {
   emulatorState: EmulatorState;
@@ -19,24 +19,24 @@ type Props = { children: ReactNode }
 
 export const EmulationProvider: FC<Props> = ({ children }) => {
   const [emulatorState, setEmulatorState] = useState<EmulatorState>(new EmulatorState());
-  const [paused, setPaused] = useState<boolean>(true);
-  const { keyBuffer, clearKeys: clearKeyBuffer } = useChipKeyBoard();
+  const { keydownBuffer } = useChipKeyBoard();
 
   const emulatorTick = () => {
-    if (paused) return;
-
-    emulatorState.keyPressed = keyBuffer;
-    clearKeyBuffer();
+    if (emulatorState.paused) return;
+    emulatorState.keydownBuffer = keydownBuffer;
     const newState = processOpcode(emulatorState);
     setEmulatorState(newState);
   }
 
   const loadRom = (rom: number[]) => {
-    setPaused(true);
-    emulatorState.reset();
-    emulatorState.loadRom(rom);
-    setPaused(false);
-    setTimeout(() => setPaused(false))
+    const state = emulatorFromRom(rom);
+    setEmulatorState(state);
+  }
+
+  const setPaused = () => {
+    const state = new EmulatorState(emulatorState);
+    state.paused = !state.paused;
+    setEmulatorState(state);
   }
 
   useInterval(emulatorTick, CLOCK_INTERVAL);

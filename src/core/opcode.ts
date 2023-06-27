@@ -4,6 +4,14 @@ Number.prototype.toHex = function() {
   return this.toString(16).toUpperCase();
 }
 
+Array.prototype.getAllIndexes = function<T>(value: T) {
+  return this.reduce((acc: number[], curr: T, index: number) => {
+    if (curr === value) acc.push(index);
+    return acc;
+  } , []);
+}
+
+
 export const notImpl = (opcode: number, state: EmulatorState): void => {
   return;
 }
@@ -19,6 +27,11 @@ export const cls = (opcode: number, state: EmulatorState): void => {
 
 // 00EE - RET
 export const ret = (opcode: number, state: EmulatorState): void => {
+  if (state.stackPointer === -1) {
+    state.paused = true;
+    throw new Error('Stack underflow.')
+  }
+
   state.programCounter = state.stack[state.stackPointer];
   state.stackPointer -= 1;
 }
@@ -30,6 +43,11 @@ export const jp = (opcode: number, state: EmulatorState): void => {
 
 // 2nnn - CALL addr
 export const call = (opcode: number, state: EmulatorState): void => {
+  if (state.stackPointer === 15) {
+    state.paused = true;
+    throw new Error('Stack overflow.')
+  }
+
   state.stackPointer += 1;
   state.stack[state.stackPointer] = state.programCounter + 2;
   state.programCounter = opcode & 0x0FFF;
@@ -95,6 +113,7 @@ export const orVxVy = (opcode: number, state: EmulatorState): void => {
   const x = (opcode & 0x0F00) >> 8;
   const y = (opcode & 0x00F0) >> 4;
   state.vRegisters[x] |= state.vRegisters[y];
+  state.vRegisters[0xF] = 0;
   state.programCounter += 2;
 }
 
@@ -103,6 +122,7 @@ export const andVxVy = (opcode: number, state: EmulatorState): void => {
   const x = (opcode & 0x0F00) >> 8;
   const y = (opcode & 0x00F0) >> 4;
   state.vRegisters[x] &= state.vRegisters[y];
+  state.vRegisters[0xF] = 0;
   state.programCounter += 2;
 }
 
@@ -111,6 +131,7 @@ export const xorVxVy = (opcode: number, state: EmulatorState): void => {
   const x = (opcode & 0x0F00) >> 8;
   const y = (opcode & 0x00F0) >> 4;
   state.vRegisters[x] ^= state.vRegisters[y];
+  state.vRegisters[0xF] = 0;
   state.programCounter += 2;
 }
 
@@ -179,7 +200,6 @@ export const subnVxVy = (opcode: number, state: EmulatorState): void => {
 // 8xyE - SHL Vx {, Vy}
 export const shlVxVy = (opcode: number, state: EmulatorState): void => {
   const x = (opcode & 0x0F00) >> 8; 
-  const y = (opcode & 0x00F0) >> 4;
   const vx = state.vRegisters[x];
   state.vRegisters[x] = (vx << 1) & 0xFF;
   state.vRegisters[0xF] = vx >> 7;
@@ -220,8 +240,8 @@ export const drwVxVyNibble = (opcode: number, state: EmulatorState): void => {
   const x = (opcode & 0x0F00) >> 8; 
   const y = (opcode & 0x00F0) >> 4;
   const height = opcode & 0x000F;
-  const xPos = state.vRegisters[x];
-  const yPos = state.vRegisters[y];
+  const xPos = state.vRegisters[x] & 63;
+  const yPos = state.vRegisters[y] & 31;
   state.vRegisters[0xF] = 0;
   for (let yLine = 0; yLine < height; yLine++) {
     const pixel = state.memory[state.indexRegister + yLine];
@@ -242,7 +262,8 @@ export const drwVxVyNibble = (opcode: number, state: EmulatorState): void => {
 // Ex9E - SKP Vx
 export const skpVx = (opcode: number, state: EmulatorState): void => {
   const x = (opcode & 0x0F00) >> 8;
-  if (state.keyPressed[state.vRegisters[x]]) {
+  const vx = state.vRegisters[x];
+  if (state.keydownBuffer.curr[vx] === 1) {
     state.programCounter += 2;
   }
   state.programCounter += 2;
@@ -251,7 +272,8 @@ export const skpVx = (opcode: number, state: EmulatorState): void => {
 // ExA1 - SKNP Vx
 export const sknpVx = (opcode: number, state: EmulatorState): void => {
   const x = (opcode & 0x0F00) >> 8;
-  if (!state.keyPressed[state.vRegisters[x]]) {
+  const vx = state.vRegisters[x];
+  if (state.keydownBuffer.curr[vx] === 0) {
     state.programCounter += 2;
   }
   state.programCounter += 2;
@@ -267,10 +289,12 @@ export const ldVxDT = (opcode: number, state: EmulatorState): void => {
 // Fx0A - LD Vx, K
 export const ldVxK = (opcode: number, state: EmulatorState): void => {
   const x = (opcode & 0x0F00) >> 8;
-  if (state.keyPressed.includes(x)) {
-    state.vRegisters[x] = state.keyPressed[x];
-    return;
-  }
+  const prevKeys = state.keydownBuffer.prev.getAllIndexes(1);
+  const currKeys = state.keydownBuffer.curr.getAllIndexes(1);
+  const changedKeys = prevKeys.filter(k => currKeys.includes(k))
+  if (changedKeys.length === 0) return;
+
+  state.vRegisters[x] = changedKeys[0];
   state.programCounter += 2;
 }
 
@@ -328,126 +352,4 @@ export const ldVxI = (opcode: number, state: EmulatorState): void => {
     state.vRegisters[i] = state.memory[state.indexRegister + i];
   }
   state.programCounter += 2;
-}
-
-export const processOpcode = (state: EmulatorState): EmulatorState => {
-  const opcode = state.memory[state.programCounter] << 8 | state.memory[state.programCounter + 1];
-  const firstNibble = (opcode & 0xF000) >> 12;
-  const thirdNibble = (opcode & 0x00F0) >> 4;
-  const fourthNibble = opcode & 0x000F;
-  console.log('%copcode.ts line:324 opcode.toHex()', 'color: #26bfa5;', opcode.toHex());
-
-  if (firstNibble.toHex() === '0') {
-    if (fourthNibble.toHex() === '0') {
-      cls(opcode, state)
-    }
-    if (fourthNibble.toHex() === 'E') {
-      ret(opcode, state)
-    }
-  }
-  if (firstNibble.toHex() === '1') {
-    jp(opcode, state)
-  }
-  if (firstNibble.toHex() === '2') {
-    call(opcode, state)
-  }
-  if (firstNibble.toHex() === '3') {
-    se(opcode, state)
-  }
-  if (firstNibble.toHex() === '4') {
-    sne(opcode, state)
-  }
-  if (firstNibble.toHex() === '5') {
-    seVxVy(opcode, state)
-  }
-  if (firstNibble.toHex() === '6') {
-    ldVx(opcode, state)
-  }
-  if (firstNibble.toHex() === '7') {
-    addVx(opcode, state)
-  }
-  if (firstNibble.toHex() === '8') {
-    if (fourthNibble.toHex() === '0') {
-      ldVxVy(opcode, state)
-    }
-    if (fourthNibble.toHex() === '1') {
-      orVxVy(opcode, state)
-    }
-    if (fourthNibble.toHex() === '2') {
-      andVxVy(opcode, state)
-    }
-    if (fourthNibble.toHex() === '3') {
-      xorVxVy(opcode, state)
-    }
-    if (fourthNibble.toHex() === '4') {
-      addVxVy(opcode, state)
-    }
-    if (fourthNibble.toHex() === '5') {
-      subVxVy(opcode, state)
-    }
-    if (fourthNibble.toHex() === '6') {
-      shrVxVy(opcode, state)
-    }
-    if (fourthNibble.toHex() === '7') {
-      subnVxVy(opcode, state)
-    }
-    if (fourthNibble.toHex() === 'E') {
-      shlVxVy(opcode, state)
-    }
-  }
-  if (firstNibble.toHex() === '9') {
-    sneVxVy(opcode, state)
-  }
-  if (firstNibble.toHex() === 'A') {
-    ldIAddr(opcode, state)
-  }
-  if (firstNibble.toHex() === 'B') {
-    jpV0Addr(opcode, state)
-  }
-  if (firstNibble.toHex() === 'C') {
-    rndVxByte(opcode, state)
-  }
-  if (firstNibble.toHex() === 'D') {
-    drwVxVyNibble(opcode, state)
-  }
-  if (firstNibble.toHex() === 'E') {
-    if (thirdNibble.toHex() === '9' && fourthNibble.toHex() === 'A') {
-      skpVx(opcode, state)
-    }
-    if (thirdNibble.toHex() === 'A' && fourthNibble.toHex() === '1') {
-      sknpVx(opcode, state)
-    }
-  }
-  if (firstNibble.toHex() === 'F') {
-    if (thirdNibble.toHex() === '0' && fourthNibble.toHex() === '7') {
-      ldVxDT(opcode, state)
-    }
-    if (thirdNibble.toHex() === '0' && fourthNibble.toHex() === 'A') {
-      ldVxK(opcode, state)
-    }
-    if (thirdNibble.toHex() === '1' && fourthNibble.toHex() === '5') {
-      ldDTVx(opcode, state)
-    }
-    if (thirdNibble.toHex() === '1' && fourthNibble.toHex() === '8') {
-      ldSTVx(opcode, state)
-    }
-    if (thirdNibble.toHex() === '1' && fourthNibble.toHex() === 'E') {
-      addIVx(opcode, state)
-    }
-    if (thirdNibble.toHex() === '2' && fourthNibble.toHex() === '9') {
-      ldFVx(opcode, state)
-    }
-    if (thirdNibble.toHex() === '3' && fourthNibble.toHex() === '3') {
-      ldBVx(opcode, state)
-    }
-    if (thirdNibble.toHex() === '5' && fourthNibble.toHex() === '5') {
-      ldIVx(opcode, state)
-    }
-    if (thirdNibble.toHex() === '6' && fourthNibble.toHex() === '5') {
-      ldVxI(opcode, state)
-    }
-  }
-
-  state.keyPressed = new Array(16).fill(0);
-  return state;
 }

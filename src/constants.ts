@@ -51,7 +51,7 @@ export const CHARS: number[] = [
   0xf0,0x80,0xf0,0x80,0x80, // F
 ];
 
-export const KeyMapping = {
+export const KeyMapping: { [k: string]: number } = {
   '1': 0x1,
   '2': 0x2,
   '3': 0x3,
@@ -70,5 +70,5 @@ export const KeyMapping = {
   'v': 0xF,
 } as const;
 
-export const CLOCK_FREQ = 500;
+export const CLOCK_FREQ = 700;
 export const CLOCK_INTERVAL = 1000 / CLOCK_FREQ;

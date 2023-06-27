@@ -1,4 +1,4 @@
-import { KeyMapping } from "./constants";
+import { KeyBuffer } from "./hooks/useChipKeyBoard";
 
 declare global {
   interface CanvasRenderingContext2D {
@@ -6,6 +6,9 @@ declare global {
   }
   interface Number {
     toHex(): string;
+  }
+  interface Array<T> {
+    getAllIndexes(value: T): number[];
   }
 }
 
@@ -30,27 +33,23 @@ export class EmulatorState {
   pixelBuffer = new Array(64 * 32).fill(0);
   drawFlag = false;
   indexRegister = 0;
-  keyPressed: number[] = new Array(16).fill(undefined);
-  paused = true;
+  keydownBuffer: KeyBuffer = { prev: new Array(16).fill(0), curr: new Array(16).fill(0) };
+  paused = false;
 
-  reset() {
-    this.memory = new Array(4096).fill(0);
-    this.stack =  new Array(16).fill(0);
-    this.vRegisters = new Array(16).fill(0);
-    this.soundTimer = 0;
-    this.delayTimer = 0;
-    this.programCounter = 512;
-    this.stackPointer = 0;
-    this.pixelBuffer = new Array(64 * 32).fill(0);
-    this.drawFlag = false;
-    this.indexRegister = 0;
-    this.keyPressed = new Array(16).fill(undefined);
-    this.paused = true;
-  }
-
-  loadRom(rom: number[]) {
-    rom.forEach((byte, index) => {
-      this.memory[index + 512] = byte;
-    })
+  constructor(copy?: EmulatorState) {
+    if (copy) {
+      this.memory = [...copy.memory];
+      this.stack = [...copy.stack];
+      this.vRegisters = [...copy.vRegisters];
+      this.soundTimer = copy.soundTimer;
+      this.delayTimer = copy.delayTimer;
+      this.programCounter = copy.programCounter;
+      this.stackPointer = copy.stackPointer;
+      this.pixelBuffer = [...copy.pixelBuffer];
+      this.drawFlag = copy.drawFlag;
+      this.indexRegister = copy.indexRegister;
+      this.keydownBuffer = { prev: [...copy.keydownBuffer.prev], curr: [...copy.keydownBuffer.curr] };
+      this.paused = copy.paused;
+    }
   }
 }

@@ -2,8 +2,11 @@ import { ChangeEvent, FC, useRef, useState } from "react";
 import { useEmulationContext } from "../contexts/emulationContext";
 
 const ROM_LIST = [
-  "TEST",
-  "TEST_FLAGS",
+  // "TEST",
+  // "TEST_FLAGS",
+  // "TEST_QUIRKS",
+  // "TEST_KEYS",
+  // "TEST_IBM",
   "15PUZZLE",
   "BLINKY",
   "BLITZ",
@@ -33,6 +36,7 @@ const ROM_LIST = [
 export const RomSelector: FC = () => {
   const [rom, setRom] = useState<typeof ROM_LIST[number]>();
   const { loadRom } = useEmulationContext();
+  const selector = useRef<HTMLSelectElement>(null);
 
   const selectRom = async (event: ChangeEvent) => {
     const selectElement = event.target as HTMLSelectElement;
@@ -43,6 +47,7 @@ export const RomSelector: FC = () => {
       const romDataRaw = await romResponse.arrayBuffer();
       const romData = Array.from(new Uint8Array(romDataRaw));
       loadRom(romData);
+      selector.current?.blur();
     } catch (error) {
       console.error(error);
     }
@@ -51,7 +56,7 @@ export const RomSelector: FC = () => {
   return (
     <>
       <label>Select Rom</label>
-      <select value={rom} onChange={selectRom} className="flex flex-row justify-evenly w-full my-2">
+      <select ref={selector} value={rom} onChange={selectRom} className="flex flex-row justify-evenly w-full my-2">
         {
           ROM_LIST.map((romName) => (
             <option

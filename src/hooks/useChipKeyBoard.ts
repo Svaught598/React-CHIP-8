@@ -2,25 +2,39 @@ import { useState } from "react";
 import { useKeyPress } from "./useKeyPress";
 import { KeyMapping } from "../constants";
 
-export const useChipKeyBoard = () => {
-  const [keyBuffer, setKeyBuffer] = useState(new Array(16).fill(0));
+export type KeyBuffer = {
+  prev: number[],
+  curr: number[],
+}
 
-  const clearKeys = () => {
-    setKeyBuffer(new Array(16).fill(0));
-  }
+export const useChipKeyBoard = () => {
+  const [keydownBuffer, setKeydownBuffer] = useState(new Array(16).fill(0));
+  const [prevKeydownBuffer, setPrevKeydownBuffer] = useState(new Array(16).fill(0));
 
   const setPressedKey = (index: number) => {
-    const newKeyBuffer = [...keyBuffer];
-    newKeyBuffer[index] = newKeyBuffer[index] ? 0 : 1;
-    setKeyBuffer(newKeyBuffer);
+    const newKeyupBuffer = [...keydownBuffer];
+    newKeyupBuffer[index] = 1;
+    setPrevKeydownBuffer(keydownBuffer);
+    setKeydownBuffer(newKeyupBuffer);
+  }
+
+  const setReleasedKey = (index: number) => {
+    const newKeydownBuffer = [...keydownBuffer];
+    newKeydownBuffer[index] = 0;
+    setPrevKeydownBuffer(keydownBuffer);
+    setKeydownBuffer(newKeydownBuffer);
   }
 
   // this is always the same order as a constant, so
   // we don't need to worry about hook rules ;)
   Object.entries(KeyMapping).forEach(([key, index]) => {
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    useKeyPress(key, () => setPressedKey(index));
+    useKeyPress({
+      key, 
+      onpress: () => setPressedKey(index),
+      onrelease: () => setReleasedKey(index),
+    });
   })
 
-  return { keyBuffer, clearKeys }
+  return { keydownBuffer: { prev: prevKeydownBuffer, curr: keydownBuffer } }
 }
