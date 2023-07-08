@@ -3,10 +3,17 @@ import { NamedTheme } from "./types";
 
 export const DEFAULT_THEMES: NamedTheme[] = [
   {
-    name: 'Forest',
+    name: 'Classic',
     theme: {
-      light: '#7f3400',
-      dark: '#326f53'
+      light: '#0c090d',
+      dark: '#f0efeb',
+    }
+  },
+  {
+    name: 'Aqua',
+    theme: {
+      light: '#90b0ff',
+      dark: '#002f23'
     }
   },
   {
@@ -17,20 +24,18 @@ export const DEFAULT_THEMES: NamedTheme[] = [
     }
   },
   {
-    name: 'Awful',
+    name: 'Magma',
     theme: {
-      light: '#2980b9',
-      dark: '#e74c3c',
+      light: '#bb3e03',
+      dark: '#330000',
     }
   },
-  {
-    name: 'Insect',
-    theme: {
-      light: '#8e44ad',
-      dark: '#f39c12',
-    }
-  },
-]
+];
+
+export const CLASSIC_THEME = {
+  dark: '#0c090d',
+  light: '#f0efeb',
+}
 
 export const CHARS: number[] = [
   0xf0,0x90,0x90,0x90,0xf0, // 0

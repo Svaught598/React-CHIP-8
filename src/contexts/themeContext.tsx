@@ -1,5 +1,6 @@
 import { Dispatch, FC, ReactNode, SetStateAction, createContext, useContext, useState } from "react";
 import { Theme } from "../types";
+import { CLASSIC_THEME, DEFAULT_THEMES } from "../constants";
 
 type ThemeContextType = {
   theme: Theme,
@@ -12,10 +13,7 @@ export const useTheme = () => useContext(ThemeContext)!;
 type Props = { children: ReactNode }
 
 export const ThemeProvider: FC<Props> = ({ children }) => {
-  const [theme, setTheme] = useState<Theme>({
-    light: '#7f3400',
-    dark : '#326f53',
-  });
+  const [theme, setTheme] = useState<Theme>(DEFAULT_THEMES[0].theme);
 
   return (
     <ThemeContext.Provider value={{ theme, setTheme }}>

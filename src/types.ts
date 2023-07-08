@@ -3,6 +3,8 @@ import { KeyBuffer } from "./hooks/useChipKeyBoard";
 declare global {
   interface CanvasRenderingContext2D {
     renderPixels(pixelBuffer: number[], theme: Theme): void;
+    renderPaused(): void;
+    renderSplash(): void;
   }
   interface Number {
     toHex(): string;

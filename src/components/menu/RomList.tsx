@@ -1,5 +1,7 @@
-import { ChangeEvent, FC, useRef, useState } from "react";
-import { useEmulationContext } from "../contexts/emulationContext";
+import { FC, useRef, useState } from "react";
+import { useEmulationContext } from "../../contexts/emulationContext";
+import { Button } from "../common/Button";
+import { CLASSIC_THEME } from "../../constants";
 
 const ROM_LIST = [
   // "TEST",
@@ -33,14 +35,12 @@ const ROM_LIST = [
   "WIPEOFF",
 ] as const;
 
-export const RomSelector: FC = () => {
+export const RomList: FC = () => {
   const [rom, setRom] = useState<typeof ROM_LIST[number]>();
   const { loadRom } = useEmulationContext();
   const selector = useRef<HTMLSelectElement>(null);
 
-  const selectRom = async (event: ChangeEvent) => {
-    const selectElement = event.target as HTMLSelectElement;
-    const romName = selectElement.value as typeof ROM_LIST[number];
+  const selectRom = async (romName: typeof ROM_LIST[number]) => {
     setRom(romName);
     try {
       const romResponse = await fetch(`./roms/${romName}`);
@@ -55,20 +55,19 @@ export const RomSelector: FC = () => {
 
   return (
     <>
-      <label>Select Rom</label>
-      <select ref={selector} value={rom} onChange={selectRom} className="flex flex-row justify-evenly w-full my-2">
+      <div className="h-96 overflow-y-auto flex flex-col gap-2 pr-2">     
         {
-          ROM_LIST.map((romName) => (
-            <option
+          ROM_LIST.map((romName) => 
+            <Button
               key={romName}
-              className="bg-zinc-700 py-2 px-8 rounded-md"
-              value={romName}
-            >
-              { romName }
-            </option>
-          ))
+              text={romName}
+              theme={CLASSIC_THEME}
+              selected={rom === romName}
+              onClick={() => selectRom(romName)}
+            />
+          )
         }
-      </select>
+      </div>
     </>
   );
 }
