@@ -17,6 +17,7 @@ declare global {
 export type Theme = {
   light: string;
   dark: string;
+  invertOnUI: boolean;
 }
 
 export type NamedTheme = {

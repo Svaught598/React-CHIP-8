@@ -10,10 +10,9 @@ export const Canvas: FC = () => {
   const { emulatorState } = useEmulationContext();
   ctx?.renderPixels(emulatorState.pixelBuffer, theme);
   if (emulatorState.paused) ctx?.renderPaused();
-  // if (emulatorState.pixelBuffer.every(pixel => pixel === 0)) ctx?.renderSplash();
 
   return (
-  <div className="border-slate-600 border-4">
+  <div style={{ backgroundColor: theme.light, borderColor: theme.dark }} className="border-4 p-4">
     <canvas ref={canvas} width={640} height={320} />
   </div>
   )
@@ -38,15 +37,4 @@ CanvasRenderingContext2D.prototype.renderPaused =
     this.textAlign = 'center';
     this.textBaseline = 'middle';
     this.fillText('Paused', 320, 160);
-  }
-
-CanvasRenderingContext2D.prototype.renderSplash =
-  function() {
-    this.fillStyle = 'rgba(0, 0, 0, 0.5)';
-    this.fillRect(0, 0, 640, 320);
-    this.fillStyle = 'white';
-    this.font = '48px futile-pro';
-    this.textAlign = 'center';
-    this.textBaseline = 'middle';
-    this.fillText('CHIP-8 Emulator', 320, 160);
   }

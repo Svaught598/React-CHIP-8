@@ -2,6 +2,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { PropsWithChildren } from "react";
 import { LayeredText } from "../common/LayeredText";
 import { MenuItem } from "./Menu";
+import { useTheme } from "../../contexts/themeContext";
 
 
 type ExpansionListProps = {
@@ -13,6 +14,7 @@ type ExpansionListProps = {
 
 export const ExpansionList: React.FC<PropsWithChildren<ExpansionListProps>> = ({ title, openList, onOpen, onClose, children }) => {
   const isOpen = openList === title;
+  const { uiTheme } = useTheme();
 
   const handleToggle = () => {
     if (isOpen) {
@@ -23,7 +25,7 @@ export const ExpansionList: React.FC<PropsWithChildren<ExpansionListProps>> = ({
   };
 
   return (
-    <div className="bg-slate-700 border-slate-400 border-4 p-2">
+    <div style={{ backgroundColor: uiTheme.dark, borderColor: uiTheme.light }} className="border-4 p-2">
       <div onClick={handleToggle} className="px-2 flex flex-row justify-between cursor-pointer">
         <LayeredText fontSize="24px" text={title} />
         <LayeredText fontSize="24px" text={isOpen ? '-' : '+'} />

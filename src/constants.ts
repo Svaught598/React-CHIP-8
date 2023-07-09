@@ -7,13 +7,15 @@ export const DEFAULT_THEMES: NamedTheme[] = [
     theme: {
       light: '#0c090d',
       dark: '#f0efeb',
+      invertOnUI: true,
     }
   },
   {
     name: 'Aqua',
     theme: {
       light: '#90b0ff',
-      dark: '#002f23'
+      dark: '#002f23',
+      invertOnUI: false,
     }
   },
   {
@@ -21,6 +23,7 @@ export const DEFAULT_THEMES: NamedTheme[] = [
     theme: {
       light: '#f1c40f',
       dark: '#2c3e50',
+      invertOnUI: false,
     }
   },
   {
@@ -28,6 +31,7 @@ export const DEFAULT_THEMES: NamedTheme[] = [
     theme: {
       light: '#bb3e03',
       dark: '#330000',
+      invertOnUI: false,
     }
   },
 ];
@@ -35,6 +39,7 @@ export const DEFAULT_THEMES: NamedTheme[] = [
 export const CLASSIC_THEME = {
   dark: '#0c090d',
   light: '#f0efeb',
+  invertOnUI: false, 
 }
 
 export const CHARS: number[] = [
@@ -75,5 +80,5 @@ export const KeyMapping: { [k: string]: number } = {
   'v': 0xF,
 } as const;
 
-export const CLOCK_FREQ = 700;
+export const CLOCK_FREQ = 1000;
 export const CLOCK_INTERVAL = 1000 / CLOCK_FREQ;

@@ -8,7 +8,7 @@ import { emulatorFromRom, processOpcode } from "../core/emulator";
 type EmulationContextType = {
   emulatorState: EmulatorState;
   loadRom: (rom: number[]) => void;
-  setPaused: React.Dispatch<React.SetStateAction<boolean>>;
+  togglePaused: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const EmulationContext = createContext<EmulationContextType | null>(null)
@@ -18,13 +18,13 @@ export const useEmulationContext = () => useContext(EmulationContext)!;
 type Props = { children: ReactNode }
 
 export const EmulationProvider: FC<Props> = ({ children }) => {
-  const [emulatorState, setEmulatorState] = useState<EmulatorState>(new EmulatorState());
-  const { keydownBuffer } = useChipKeyBoard();
+  const [emulatorState, setEmulatorState] = useState<EmulatorState>(() => new EmulatorState());
+  const { keydownBuffer } = useChipKeyBoard(); // buffers keyevents and returns the current buffer
 
   const emulatorTick = () => {
     if (emulatorState.paused) return;
     emulatorState.keydownBuffer = keydownBuffer;
-    const newState = processOpcode(emulatorState);
+    const newState = processOpcode(emulatorState); // this function copies all of emulatorState into a new object
     setEmulatorState(newState);
   }
 
@@ -33,7 +33,7 @@ export const EmulationProvider: FC<Props> = ({ children }) => {
     setEmulatorState(state);
   }
 
-  const setPaused = () => {
+  const togglePaused = () => {
     const state = new EmulatorState(emulatorState);
     state.paused = !state.paused;
     setEmulatorState(state);
@@ -42,7 +42,7 @@ export const EmulationProvider: FC<Props> = ({ children }) => {
   useInterval(emulatorTick, CLOCK_INTERVAL);
 
   return (
-    <EmulationContext.Provider value={{ emulatorState, loadRom, setPaused }}>
+    <EmulationContext.Provider value={{ emulatorState, loadRom, togglePaused }}>
       { children }
     </EmulationContext.Provider>
   );

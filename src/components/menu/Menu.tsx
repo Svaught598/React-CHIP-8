@@ -12,14 +12,14 @@ export type MenuItem =
 
 export const Menu: React.FC = () => {
   const [openList, setOpenList] = useState<MenuItem | undefined>();
-  const { emulatorState, setPaused } = useEmulationContext();
+  const { emulatorState, togglePaused  } = useEmulationContext();
   const isPaused = emulatorState.paused;
 
   return (
     <section className="flex flex-col gap-2 w-full">
       <Button
         text={isPaused ? "Resume" : 'Pause Emulator'}
-        onClick={() => setPaused(isPaused => !isPaused)} 
+        onClick={() => togglePaused(isPaused => !isPaused)} 
         theme={CLASSIC_THEME} 
       />
 

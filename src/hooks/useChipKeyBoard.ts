@@ -1,5 +1,4 @@
-import { useState } from "react";
-import { useKeyPress } from "./useKeyPress";
+import { useCallback, useEffect, useState } from "react";
 import { KeyMapping } from "../constants";
 
 export type KeyBuffer = {
@@ -7,34 +6,34 @@ export type KeyBuffer = {
   curr: number[],
 }
 
-export const useChipKeyBoard = () => {
-  const [keydownBuffer, setKeydownBuffer] = useState(new Array(16).fill(0));
-  const [prevKeydownBuffer, setPrevKeydownBuffer] = useState(new Array(16).fill(0));
+const KEYS = Object.keys(KeyMapping);
 
-  const setPressedKey = (index: number) => {
+export const useChipKeyBoard = () => {
+  const [keydownBuffer, setKeydownBuffer] = useState(() => new Array(16).fill(0));
+  const [prevKeydownBuffer, setPrevKeydownBuffer] = useState(() => new Array(16).fill(0));
+
+  const setPressedKey = useCallback((event: KeyboardEvent) => {
+    if (!KEYS.includes(event.key)) return;
+    const index = KeyMapping[event.key];
     const newKeyupBuffer = [...keydownBuffer];
     newKeyupBuffer[index] = 1;
     setPrevKeydownBuffer(keydownBuffer);
     setKeydownBuffer(newKeyupBuffer);
-  }
+  }, [keydownBuffer]);
 
-  const setReleasedKey = (index: number) => {
+  const setReleasedKey = useCallback((event: KeyboardEvent) => {
+    if (!KEYS.includes(event.key)) return;
+    const index = KeyMapping[event.key];
     const newKeydownBuffer = [...keydownBuffer];
     newKeydownBuffer[index] = 0;
     setPrevKeydownBuffer(keydownBuffer);
     setKeydownBuffer(newKeydownBuffer);
-  }
+  }, [keydownBuffer]);
 
-  // this is always the same order as a constant, so
-  // we don't need to worry about hook rules ;)
-  Object.entries(KeyMapping).forEach(([key, index]) => {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    useKeyPress({
-      key, 
-      onpress: () => setPressedKey(index),
-      onrelease: () => setReleasedKey(index),
-    });
-  })
+  useEffect(() => {
+    window.addEventListener('keydown', setPressedKey);
+    window.addEventListener('keyup', setReleasedKey);
+  }, []);
 
   return { keydownBuffer: { prev: prevKeydownBuffer, curr: keydownBuffer } }
 }

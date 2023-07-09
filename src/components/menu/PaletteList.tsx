@@ -2,6 +2,7 @@ import { FC } from "react";
 import { useTheme } from "../../contexts/themeContext";
 import { DEFAULT_THEMES } from "../../constants";
 import { Button } from "../common/Button";
+import { getUiTheme } from "../../utils";
 
 export const PaletteList: FC = () => {
   const { setTheme } = useTheme();
@@ -14,7 +15,7 @@ export const PaletteList: FC = () => {
             <Button
               key={name}
               text={name}
-              theme={theme}
+              theme={getUiTheme(theme)}
               onClick={() => setTheme(theme)}
             />
           ))
