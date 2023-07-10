@@ -4,9 +4,8 @@ import { ExpansionList } from "./ExpansionList";
 import { useState } from "react";
 import { Button } from "../common/Button";
 import { useEmulationContext } from "../../contexts/emulationContext";
-import { CLASSIC_THEME, CUSTOM_THEMES_KEY, DEFAULT_THEMES } from "../../constants";
+import { CLASSIC_THEME, DEFAULT_THEMES } from "../../constants";
 import { PaletteMaker } from "../PaletteMaker";
-import { NamedTheme } from "../../types";
 import { useThemeContext } from "../../contexts/themeContext";
 import { AnimatePresence, motion } from "framer-motion";
 

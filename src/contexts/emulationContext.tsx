@@ -7,12 +7,10 @@ type EmulationContextType = {
   setRom: Dispatch<SetStateAction<number[]>>;
 };
 
-const EmulationContext = createContext<EmulationContextType | null>(null)
-
-export const useEmulationContext = () => useContext(EmulationContext)!;
-
 type Props = { children: ReactNode }
 
+const EmulationContext = createContext<EmulationContextType | null>(null);
+export const useEmulationContext = () => useContext(EmulationContext)!;
 export const EmulationProvider: FC<Props> = ({ children }) => {
   const [rom, setRom] = useState<number[]>([]);
   const [paused, setPaused] = useState<boolean>(false);

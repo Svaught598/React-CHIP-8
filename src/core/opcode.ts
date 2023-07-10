@@ -173,7 +173,6 @@ export const subVxVy = (opcode: number, state: EmulatorState): void => {
 // 8xy6 - SHR Vx {, Vy}
 export const shrVxVy = (opcode: number, state: EmulatorState): void => {
   const x = (opcode & 0x0F00) >> 8; 
-  const y = (opcode & 0x00F0) >> 4;
   const vx = state.vRegisters[x];
   state.vRegisters[x] = (vx >> 1) & 0xFF;
   state.vRegisters[0xF] = vx & 0x1;

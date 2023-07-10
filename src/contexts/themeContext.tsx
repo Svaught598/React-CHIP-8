@@ -11,11 +11,10 @@ type ThemeContextType = {
   saveNewCustomTheme: (theme: NamedTheme) => void;
 };
 
-const ThemeContext = createContext<ThemeContextType | null>(null)
-export const useThemeContext = () => useContext(ThemeContext)!;
-
 type Props = { children: ReactNode }
 
+const ThemeContext = createContext<ThemeContextType | null>(null)
+export const useThemeContext = () => useContext(ThemeContext)!;
 export const ThemeProvider: FC<Props> = ({ children }) => {
   const [theme, setTheme] = useState<Theme>(DEFAULT_THEMES[0].theme);
   const [customThemes, setCustomThemes] = useState<NamedTheme[]>(() => {
