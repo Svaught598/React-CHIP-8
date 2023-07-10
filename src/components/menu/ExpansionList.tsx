@@ -26,9 +26,9 @@ export const ExpansionList: React.FC<PropsWithChildren<ExpansionListProps>> = ({
 
   return (
     <div style={{ backgroundColor: uiTheme.dark, borderColor: uiTheme.light }} className="border-4 p-2">
-      <div onClick={handleToggle} className="px-2 flex flex-row justify-between cursor-pointer">
-        <LayeredText fontSize="24px" text={title} />
-        <LayeredText fontSize="24px" text={isOpen ? '-' : '+'} />
+      <div onClick={handleToggle} className="px-2 flex flex-row justify-between cursor-pointer font-futile-pro text-xl font-black">
+        <h2>{ title }</h2>
+        <span>{ isOpen ? '-' : '+' }</span>
       </div>
       <motion.div
         initial={false}

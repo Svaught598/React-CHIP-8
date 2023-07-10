@@ -3,6 +3,7 @@ import { useThemeContext } from "../../contexts/themeContext";
 import { Button } from "../common/Button";
 import { getUiTheme } from "../../utils";
 import { NamedTheme } from "../../types";
+import { ThemedButton } from "../common/ThemedButton";
 
 type PaletteListProps = {
   themes: NamedTheme[];
@@ -15,7 +16,7 @@ export const PaletteList: FC<PaletteListProps> = ({ themes }) => {
     <div className="flex flex-col justify-evenly w-full my-2 gap-2">
       {
         themes.map(({ name, theme }, index) => (
-          <Button
+          <ThemedButton
             key={`${name}-${index}`}
             text={name}
             theme={getUiTheme(theme)}
