@@ -4,12 +4,12 @@ export class Audio {
   ctx: AudioContext = new AudioContext();
   oscillator: OscillatorNode = this.ctx.createOscillator();
 
-  startBuzzing() {
+  play() {
     this.oscillator.connect(this.ctx.destination);
     this.oscillator.start();
   }
 
-  stopBuzzing() {
+  stop() {
     this.oscillator.disconnect();
   }
 }

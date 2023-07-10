@@ -1,4 +1,5 @@
-import { EmulatorState } from "../types"
+import { EmulatorState } from "./emulator";
+
 
 Number.prototype.toHex = function() {
   return this.toString(16).toUpperCase();

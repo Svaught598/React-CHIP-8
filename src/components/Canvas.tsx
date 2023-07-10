@@ -1,12 +1,12 @@
 import { FC, useEffect, useRef } from "react";
-import { EmulatorState, Theme } from "../types";
+import { Theme } from "../types";
 import { useThemeContext } from "../contexts/themeContext";
 import { useEmulationContext } from "../contexts/emulationContext";
 import { processOpcode } from "../core/process";
-import { useChipKeyBoard } from "../hooks/useChipKeyBoard";
 import { CLASSIC_THEME, CLOCK_INTERVAL } from "../constants";
 import { Chip8KeyBoard } from "../core/keyboard";
 import { Audio } from "../core/audio";
+import { EmulatorState } from "../core/emulator";
 
 const emulatorState = new EmulatorState();
 const keyboard = new Chip8KeyBoard();
@@ -17,13 +17,11 @@ export const Canvas: FC = () => {
   const { paused, rom } = useEmulationContext();
   const canvas = useRef<HTMLCanvasElement>(null);
   const ctx = canvas.current?.getContext('2d');
-  const { keydownBuffer } = useChipKeyBoard(); 
 
   // setup emulator to run on component mount
   useEffect(() => {
-    const ticking = setInterval(() => {
+    const state = setInterval(() => {
       const isPaused = emulatorState.meta.paused;
-      emulatorState.keydownBuffer = keydownBuffer;
       emulatorState.keydownBuffer = keyboard.keydownBuffer;
       if (!isPaused) processOpcode(emulatorState);
       ctx?.renderPixels(emulatorState.pixelBuffer, emulatorState.meta.theme ?? CLASSIC_THEME);
@@ -33,20 +31,15 @@ export const Canvas: FC = () => {
     const timers = setInterval(() => {
       if (emulatorState.delayTimer > 0) emulatorState.delayTimer -= 1;
       if (emulatorState.soundTimer > 0) emulatorState.soundTimer -= 1;
-      
-      if (emulatorState.soundTimer > 0) {
-        audio.startBuzzing();
-      } else {
-        audio.stopBuzzing();
-      }
+      if (emulatorState.soundTimer > 0) audio.play();
+      else audio.stop();
     }, CLOCK_INTERVAL);
 
     return () => {
-      clearInterval(ticking);
+      clearInterval(state);
       clearInterval(timers);
     }
   }, [ctx]);
-
 
   // load rom
   useEffect(() => {

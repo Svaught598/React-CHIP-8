@@ -1,6 +1,6 @@
 import { KeyMapping } from "../constants";
 
-type KeyBuffer = {
+export type KeyBuffer = {
   prev: number[];
   curr: number[];
 }
