@@ -26,6 +26,7 @@ export type NamedTheme = {
 }
 
 export class EmulatorState {
+  timerTicks = 0;
   memory = new Array(4096).fill(0);
   stack =  new Array(16).fill(0);
   vRegisters = new Array(16).fill(0);

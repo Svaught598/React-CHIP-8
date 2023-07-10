@@ -2,7 +2,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { PropsWithChildren } from "react";
 import { LayeredText } from "../common/LayeredText";
 import { MenuItem } from "./Menu";
-import { useTheme } from "../../contexts/themeContext";
+import { useThemeContext } from "../../contexts/themeContext";
 
 
 type ExpansionListProps = {
@@ -14,7 +14,7 @@ type ExpansionListProps = {
 
 export const ExpansionList: React.FC<PropsWithChildren<ExpansionListProps>> = ({ title, openList, onOpen, onClose, children }) => {
   const isOpen = openList === title;
-  const { uiTheme } = useTheme();
+  const { uiTheme } = useThemeContext();
 
   const handleToggle = () => {
     if (isOpen) {

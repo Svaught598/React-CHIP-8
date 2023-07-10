@@ -1,39 +1,9 @@
 import { FC, useRef, useState } from "react";
 import { useEmulationContext } from "../../contexts/emulationContext";
 import { Button } from "../common/Button";
-import { CLASSIC_THEME } from "../../constants";
+import { CLASSIC_THEME, ROM_LIST } from "../../constants";
 
-const ROM_LIST = [
-  // "TEST",
-  // "TEST_FLAGS",
-  // "TEST_QUIRKS",
-  // "TEST_KEYS",
-  // "TEST_IBM",
-  "15PUZZLE",
-  "BLINKY",
-  "BLITZ",
-  "BRIX",
-  "CONNECT4",
-  "GUESS",
-  "HIDDEN",
-  "INVADERS",
-  "KALEID",
-  "list.txt",
-  "MAZE",
-  "MERLIN",
-  "MISSILE",
-  "PONG",
-  "PONG2",
-  "PUZZLE",
-  "SYZYGY",
-  "TANK",
-  "TETRIS",
-  "TICTAC",
-  "UFO",
-  "VBRIX",
-  "VERS",
-  "WIPEOFF",
-] as const;
+
 
 export const RomList: FC = () => {
   const [rom, setRom] = useState<typeof ROM_LIST[number]>();

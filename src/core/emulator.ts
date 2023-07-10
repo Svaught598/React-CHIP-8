@@ -21,11 +21,6 @@ export const processOpcode = (state: EmulatorState): EmulatorState => {
   const thirdNibble = (opcode & 0x00F0) >> 4;
   const fourthNibble = opcode & 0x000F;
 
-  if (state.delayTimer  > 0)
-    state.delayTimer -= 1;
-  if (state.soundTimer > 0)
-    state.soundTimer -= 1
-
   if (firstNibble.toHex() === '0') {
     if (fourthNibble.toHex() === '0') {
       cls(opcode, state)

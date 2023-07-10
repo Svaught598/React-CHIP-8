@@ -1,10 +1,10 @@
 import { FC, useRef } from "react";
 import { Theme } from "../types";
-import { useTheme } from "../contexts/themeContext";
+import { useThemeContext } from "../contexts/themeContext";
 import { useEmulationContext } from "../contexts/emulationContext";
 
 export const Canvas: FC = () => {
-  const { theme } = useTheme();
+  const { theme } = useThemeContext();
   const canvas = useRef<HTMLCanvasElement>(null);
   const ctx = canvas.current?.getContext('2d');
   const { emulatorState } = useEmulationContext();

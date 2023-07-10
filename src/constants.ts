@@ -1,5 +1,6 @@
 import { NamedTheme } from "./types";
 
+export const CUSTOM_THEMES_KEY = 'custom-themes';
 
 export const DEFAULT_THEMES: NamedTheme[] = [
   {
@@ -35,6 +36,38 @@ export const DEFAULT_THEMES: NamedTheme[] = [
     }
   },
 ];
+
+export const ROM_LIST = [
+  // "TEST",
+  // "TEST_FLAGS",
+  // "TEST_QUIRKS",
+  // "TEST_KEYS",
+  // "TEST_IBM",
+  "15PUZZLE",
+  "BLINKY",
+  "BLITZ",
+  "BRIX",
+  "CONNECT4",
+  "GUESS",
+  "HIDDEN",
+  "INVADERS",
+  "KALEID",
+  "list.txt",
+  "MAZE",
+  "MERLIN",
+  "MISSILE",
+  "PONG",
+  "PONG2",
+  "PUZZLE",
+  "SYZYGY",
+  "TANK",
+  "TETRIS",
+  "TICTAC",
+  "UFO",
+  "VBRIX",
+  "VERS",
+  "WIPEOFF",
+] as const;
 
 export const CLASSIC_THEME = {
   dark: '#0c090d',
@@ -80,5 +113,11 @@ export const KeyMapping: { [k: string]: number } = {
   'v': 0xF,
 } as const;
 
+// These numbers are not accurate to the original CHIP8 spec
+// because of perf issues with the emulator (blaming this one on
+// React's immutability fetish), but they give a good approximation
+// of the original CHIP8 feel.
 export const CLOCK_FREQ = 1000;
 export const CLOCK_INTERVAL = 1000 / CLOCK_FREQ;
+export const TIMER_FREQ = 30;
+export const TIMER_INTERVAL = 1000 / TIMER_FREQ;

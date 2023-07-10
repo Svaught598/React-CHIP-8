@@ -1,8 +1,8 @@
-import { FC, ReactNode, createContext, useContext, useState } from "react";
+import { FC, ReactNode, createContext, useCallback, useContext, useState } from "react";
 import { EmulatorState } from "../types";
 import { useInterval } from "../hooks/useInterval";
 import { useChipKeyBoard } from "../hooks/useChipKeyBoard";
-import { CLOCK_INTERVAL } from "../constants";
+import { CLOCK_INTERVAL, TIMER_INTERVAL } from "../constants";
 import { emulatorFromRom, processOpcode } from "../core/emulator";
 
 type EmulationContextType = {
@@ -19,27 +19,35 @@ type Props = { children: ReactNode }
 
 export const EmulationProvider: FC<Props> = ({ children }) => {
   const [emulatorState, setEmulatorState] = useState<EmulatorState>(() => new EmulatorState());
-  const { keydownBuffer } = useChipKeyBoard(); // buffers keyevents and returns the current buffer
+  const { keydownBuffer } = useChipKeyBoard(); 
 
-  const emulatorTick = () => {
+  const emulatorTick = useCallback(() => {
     if (emulatorState.paused) return;
     emulatorState.keydownBuffer = keydownBuffer;
     const newState = processOpcode(emulatorState); // this function copies all of emulatorState into a new object
     setEmulatorState(newState);
-  }
+  }, [emulatorState, keydownBuffer]);
 
-  const loadRom = (rom: number[]) => {
+  const loadRom = useCallback((rom: number[]) => {
     const state = emulatorFromRom(rom);
     setEmulatorState(state);
-  }
+  }, []);
 
-  const togglePaused = () => {
+  const togglePaused = useCallback(() => {
     const state = new EmulatorState(emulatorState);
     state.paused = !state.paused;
     setEmulatorState(state);
-  }
+  }, [emulatorState]);
+
+  const decrementTimers = useCallback(() => {
+    const newState = new EmulatorState(emulatorState);
+    if (newState.delayTimer > 0) newState.delayTimer -= 1;
+    if (newState.soundTimer > 0) newState.soundTimer -= 1;
+    setEmulatorState(newState);
+  }, [emulatorState]);
 
   useInterval(emulatorTick, CLOCK_INTERVAL);
+  useInterval(decrementTimers, TIMER_INTERVAL);
 
   return (
     <EmulationContext.Provider value={{ emulatorState, loadRom, togglePaused }}>

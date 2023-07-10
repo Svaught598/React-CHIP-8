@@ -1,5 +1,5 @@
 import React from "react";
-import { useTheme } from "../../contexts/themeContext";
+import { useThemeContext } from "../../contexts/themeContext";
 import { Theme } from "../../types";
 import { CLASSIC_THEME, DEFAULT_THEMES } from "../../constants";
 
