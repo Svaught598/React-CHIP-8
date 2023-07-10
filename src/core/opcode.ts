@@ -28,7 +28,7 @@ export const cls = (opcode: number, state: EmulatorState): void => {
 // 00EE - RET
 export const ret = (opcode: number, state: EmulatorState): void => {
   if (state.stackPointer === -1) {
-    state.paused = true;
+    state.meta.paused = true;
     throw new Error('Stack underflow.')
   }
 
@@ -44,7 +44,7 @@ export const jp = (opcode: number, state: EmulatorState): void => {
 // 2nnn - CALL addr
 export const call = (opcode: number, state: EmulatorState): void => {
   if (state.stackPointer === 15) {
-    state.paused = true;
+    state.meta.paused = true;
     throw new Error('Stack overflow.')
   }
 

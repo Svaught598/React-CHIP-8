@@ -7,7 +7,7 @@ import { CLASSIC_THEME, ROM_LIST } from "../../constants";
 
 export const RomList: FC = () => {
   const [rom, setRom] = useState<typeof ROM_LIST[number]>();
-  const { loadRom } = useEmulationContext();
+  const { setRom: loadRom } = useEmulationContext();
   const selector = useRef<HTMLSelectElement>(null);
 
   const selectRom = async (romName: typeof ROM_LIST[number]) => {

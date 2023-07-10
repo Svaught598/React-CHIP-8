@@ -1,9 +1,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { PropsWithChildren } from "react";
-import { LayeredText } from "../common/LayeredText";
 import { MenuItem } from "./Menu";
 import { useThemeContext } from "../../contexts/themeContext";
-
 
 type ExpansionListProps = {
   title: MenuItem;

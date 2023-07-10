@@ -18,23 +18,22 @@ export type MenuItem =
 export const Menu: React.FC = () => {
   const [openList, setOpenList] = useState<MenuItem | undefined>();
   const [openPaletteGenerator, setOpenPaletteGenerator] = useState<boolean>(false); 
-  const { emulatorState, togglePaused  } = useEmulationContext();
+  const { paused, setPaused } = useEmulationContext();
   const { customThemes } = useThemeContext();
-  const isPaused = emulatorState.paused;
 
 
   return (
     <section className="flex flex-col gap-2 w-full">
       <Button
-        text={isPaused ? "Resume" : 'Pause Emulator'}
-        onClick={() => togglePaused(isPaused => !isPaused)} 
-        theme={CLASSIC_THEME} 
+        text={ paused ? "Resume" : 'Pause Emulator' }
+        onClick={() => setPaused(isPaused => !isPaused)} 
+        theme={ CLASSIC_THEME } 
       />
 
       <Button
         text="Create Palette"
-        onClick={() => setOpenPaletteGenerator(true)} 
-        theme={CLASSIC_THEME} 
+        onClick={ () => setOpenPaletteGenerator(true) } 
+        theme={ CLASSIC_THEME } 
       />
 
       <ExpansionList
