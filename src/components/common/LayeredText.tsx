@@ -1,7 +1,6 @@
 import React from "react";
-import { useThemeContext } from "../../contexts/themeContext";
 import { Theme } from "../../types";
-import { CLASSIC_THEME, DEFAULT_THEMES } from "../../constants";
+import { CLASSIC_THEME } from "../../constants";
 
 
 type LayeredTextProps = {

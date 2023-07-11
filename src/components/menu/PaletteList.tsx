@@ -1,6 +1,5 @@
 import { FC } from "react";
 import { useThemeContext } from "../../contexts/themeContext";
-import { Button } from "../common/Button";
 import { getUiTheme } from "../../utils";
 import { NamedTheme } from "../../types";
 import { ThemedButton } from "../common/ThemedButton";

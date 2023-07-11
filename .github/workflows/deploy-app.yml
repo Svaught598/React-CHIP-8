@@ -1,0 +1,35 @@
+name: Deploy CHIP8 Emulator
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  Build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+        
+      - name: Setup Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: 14.20
+          
+      - name: Npm Install
+        run: npm ci
+        
+      - name: Next Build
+        run: npm run build
+      
+      - name: Pushes build to Github Pages repo
+        uses: cpina/github-action-push-to-another-repository@main
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
+        with:
+          source-directory: 'dist'
+          target-directory: 'chip-8'
+          destination-github-username: 'svaught598'
+          destination-repository-name: 'svaught598.github.io'
+          user-email: svaught598@gmail.com
+          target-branch: master

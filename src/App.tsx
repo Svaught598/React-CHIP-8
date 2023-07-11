@@ -1,5 +1,4 @@
 import { Canvas } from './components/Canvas'
-import { PaletteList } from './components/PaletteList'
 import { ThemeProvider } from './contexts/themeContext'
 import { Header } from './components/Header'
 import { EmulationProvider } from './contexts/emulationContext'

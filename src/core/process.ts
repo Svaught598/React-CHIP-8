@@ -12,10 +12,10 @@ export const processOpcode = (state: EmulatorState): void => {
 
   if (firstNibble.toHex() === '0') {
     if (fourthNibble.toHex() === '0') {
-      cls(opcode, state)
+      cls(state)
     }
     if (fourthNibble.toHex() === 'E') {
-      ret(opcode, state)
+      ret(state)
     }
   }
   if (firstNibble.toHex() === '1') {

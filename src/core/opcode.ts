@@ -13,12 +13,12 @@ Array.prototype.getAllIndexes = function<T>(value: T) {
 }
 
 
-export const notImpl = (opcode: number, state: EmulatorState): void => {
+export const notImpl = (): void => {
   return;
 }
 
 // 00E0 - CLS
-export const cls = (opcode: number, state: EmulatorState): void => {
+export const cls = (state: EmulatorState): void => {
   for (let i=0; i<state.pixelBuffer.length; i++) {
     state.pixelBuffer[i] = 0;
   }
@@ -27,7 +27,7 @@ export const cls = (opcode: number, state: EmulatorState): void => {
 }
 
 // 00EE - RET
-export const ret = (opcode: number, state: EmulatorState): void => {
+export const ret = (state: EmulatorState): void => {
   if (state.stackPointer === -1) {
     state.meta.paused = true;
     throw new Error('Stack underflow.')

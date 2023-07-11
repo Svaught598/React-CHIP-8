@@ -14,6 +14,7 @@ type ThemeContextType = {
 type Props = { children: ReactNode }
 
 const ThemeContext = createContext<ThemeContextType | null>(null)
+// eslint-disable-next-line react-refresh/only-export-components, @typescript-eslint/no-non-null-assertion
 export const useThemeContext = () => useContext(ThemeContext)!;
 export const ThemeProvider: FC<Props> = ({ children }) => {
   const [theme, setTheme] = useState<Theme>(DEFAULT_THEMES[0].theme);
