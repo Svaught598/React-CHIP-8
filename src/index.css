@@ -7,55 +7,55 @@
 ============================== **/
 @font-face {
     font-family: matchup-pro;
-    src: url('fonts/MatchupPro.eot') format('embedded-opentype'),
-        url('fonts/MatchupPro.woff2') format('woff2'),
-        url('fonts/MatchupPro.woff') format('woff'),
-        url('fonts/MatchupPro.ttf') format('truetype'),
-        url('fonts/MatchupPro.svg#MatchupPro') format('svg');
+    src: url('MatchupPro.eot') format('embedded-opentype'),
+        url('MatchupPro.woff2') format('woff2'),
+        url('MatchupPro.woff') format('woff'),
+        url('MatchupPro.ttf') format('truetype'),
+        url('MatchupPro.svg#MatchupPro') format('svg');
     font-weight: normal;
     font-style: normal;
 }
 
 @font-face {
     font-family: futile-pro;
-    src: url('fonts/FutilePro.eot') format('embedded-opentype'),
-        url('fonts/FutilePro.woff2') format('woff2'),
-        url('fonts/FutilePro.woff') format('woff'),
-        url('fonts/FutilePro.ttf') format('truetype'),
-        url('fonts/FutilePro.svg#FutilePro') format('svg');
+    src: url('FutilePro.eot') format('embedded-opentype'),
+        url('FutilePro.woff2') format('woff2'),
+        url('FutilePro.woff') format('woff'),
+        url('FutilePro.ttf') format('truetype'),
+        url('FutilePro.svg#FutilePro') format('svg');
     font-weight: normal;
     font-style: normal;
 }
 
 @font-face {
     font-family: ex-pro;
-    src: url('fonts/ExpressionPro.eot') format('embedded-opentype'),
-        url('fonts/ExpressionPro.woff2') format('woff2'),
-        url('fonts/ExpressionPro.woff') format('woff'),
-        url('fonts/ExpressionPro.ttf') format('truetype'),
-        url('fonts/ExpressionPro.svg#ExpressionPro') format('svg');
+    src: url('ExpressionPro.eot') format('embedded-opentype'),
+        url('ExpressionPro.woff2') format('woff2'),
+        url('ExpressionPro.woff') format('woff'),
+        url('ExpressionPro.ttf') format('truetype'),
+        url('ExpressionPro.svg#ExpressionPro') format('svg');
     font-weight: normal;
     font-style: normal;
 }
 
 @font-face {
     font-family: eq-pro;
-    src: url('fonts/EquipmentPro.eot') format('embedded-opentype'),
-        url('fonts/EquipmentPro.woff2') format('woff2'),
-        url('fonts/EquipmentPro.woff') format('woff'),
-        url('fonts/EquipmentPro.ttf') format('truetype'),
-        url('fonts/EquipmentPro.svg#EquipmentPro') format('svg');
+    src: url('EquipmentPro.eot') format('embedded-opentype'),
+        url('EquipmentPro.woff2') format('woff2'),
+        url('EquipmentPro.woff') format('woff'),
+        url('EquipmentPro.ttf') format('truetype'),
+        url('EquipmentPro.svg#EquipmentPro') format('svg');
     font-weight: normal;
     font-style: normal;
 }
 
 @font-face {
     font-family: compass-pro;
-    src: url('fonts/CompassPro.eot') format('embedded-opentype'),
-        url('fonts/CompassPro.woff2') format('woff2'),
-        url('fonts/CompassPro.woff') format('woff'),
-        url('fonts/CompassPro.ttf') format('truetype'),
-        url('fonts/CompassPro.svg#CompassPro') format('svg');
+    src: url('CompassPro.eot') format('embedded-opentype'),
+        url('CompassPro.woff2') format('woff2'),
+        url('CompassPro.woff') format('woff'),
+        url('CompassPro.ttf') format('truetype'),
+        url('CompassPro.svg#CompassPro') format('svg');
     font-weight: normal;
     font-style: normal;
 }
