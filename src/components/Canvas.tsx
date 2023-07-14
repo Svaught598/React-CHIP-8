@@ -25,7 +25,6 @@ export const Canvas: FC = () => {
       emulatorState.keydownBuffer = keyboard.keydownBuffer;
       if (!isPaused) processOpcode(emulatorState);
       ctx?.renderPixels(emulatorState.pixelBuffer, emulatorState.meta.theme ?? CLASSIC_THEME);
-      if (isPaused) ctx?.renderPaused();
     }, CLOCK_INTERVAL);
 
     const timers = setInterval(() => {
@@ -57,8 +56,15 @@ export const Canvas: FC = () => {
   }, [theme]);
 
   return (
-    <div style={{ backgroundColor: theme.light, borderColor: theme.dark }} className="border-4 p-4">
-      <canvas ref={canvas} width={640} height={320} />
+    <div className="relative">
+      { paused && 
+        <div className="font-futile-pro text-4xl absolute top-0 left-0 bg-black opacity-50 h-full w-full flex justify-center items-center">
+          <h1>PAUSED</h1>
+        </div>
+      }
+      <div style={{ backgroundColor: theme.light, borderColor: theme.dark }} className="border-4 p-4">
+        <canvas ref={canvas} width={640} height={320} />
+      </div>
     </div>
   )
 }
