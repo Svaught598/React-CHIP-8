@@ -1,8 +1,6 @@
 import { FC } from "react";
 import { keyboard } from "../core/core";
 import { useThemeContext } from "../contexts/themeContext";
-import { getUiTheme } from "../utils";
-
 
 const keys = [
   '1', '2', '3', '4',
