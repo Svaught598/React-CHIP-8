@@ -4,13 +4,8 @@ import { useThemeContext } from "../contexts/themeContext";
 import { useEmulationContext } from "../contexts/emulationContext";
 import { processOpcode } from "../core/process";
 import { CLASSIC_THEME, CLOCK_INTERVAL } from "../constants";
-import { Chip8KeyBoard } from "../core/keyboard";
-import { Audio } from "../core/audio";
-import { EmulatorState } from "../core/emulator";
+import { audio, emulatorState, keyboard } from "../core/core";
 
-const emulatorState = new EmulatorState();
-const keyboard = new Chip8KeyBoard();
-const audio = new Audio();
 
 export const Canvas: FC = () => {
   const { theme } = useThemeContext();
@@ -18,13 +13,18 @@ export const Canvas: FC = () => {
   const canvas = useRef<HTMLCanvasElement>(null);
   const ctx = canvas.current?.getContext('2d');
 
+  // setup canvas width/height based on viewport
+  const width = window.screen.availWidth < 640 ? window.screen.availWidth : 640
+  const height = width / 2;
+  const pixelSize = width / 64;
+
   // setup emulator to run on component mount
   useEffect(() => {
     const state = setInterval(() => {
       const isPaused = emulatorState.meta.paused;
       emulatorState.keydownBuffer = keyboard.keydownBuffer;
       if (!isPaused) processOpcode(emulatorState);
-      ctx?.renderPixels(emulatorState.pixelBuffer, emulatorState.meta.theme ?? CLASSIC_THEME);
+      ctx?.renderPixels(emulatorState.pixelBuffer, emulatorState.meta.theme ?? CLASSIC_THEME, pixelSize);
     }, CLOCK_INTERVAL);
 
     const timers = setInterval(() => {
@@ -38,7 +38,7 @@ export const Canvas: FC = () => {
       clearInterval(state);
       clearInterval(timers);
     }
-  }, [ctx]);
+  }, [ctx, pixelSize]);
 
   // load rom
   useEffect(() => {
@@ -56,25 +56,25 @@ export const Canvas: FC = () => {
   }, [theme]);
 
   return (
-    <div className="relative">
+    <div className="relative mt-4 md:mt-0">
       { paused && 
         <div className="font-futile-pro text-4xl absolute top-0 left-0 bg-black opacity-50 h-full w-full flex justify-center items-center">
           <h1>PAUSED</h1>
         </div>
       }
-      <div style={{ backgroundColor: theme.light, borderColor: theme.dark }} className="border-4 p-4">
-        <canvas ref={canvas} width={640} height={320} />
+      <div style={{ backgroundColor: theme.light, borderColor: theme.dark }} className="md:border-4 md:p-4">
+        <canvas ref={canvas} width={width} height={height} />
       </div>
     </div>
   )
 }
 
 CanvasRenderingContext2D.prototype.renderPixels =
-  function(pixelBuffer: number[], theme: Theme) {
+  function(pixelBuffer: number[], theme: Theme, pixelSize: number) {
     for (let x = 0; x < 64; x++) {
       for (let y = 0; y < 32; y++) {
         this.fillStyle = pixelBuffer[y * 64 + x] ? theme.dark : theme.light;
-        this.fillRect(x * 10, y * 10, 10, 10);
+        this.fillRect(x * pixelSize, y * pixelSize, pixelSize, pixelSize);
       }
     }
   }

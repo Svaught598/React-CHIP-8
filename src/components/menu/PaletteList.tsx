@@ -6,9 +6,10 @@ import { ThemedButton } from "../common/ThemedButton";
 
 type PaletteListProps = {
   themes: NamedTheme[];
+  onSelect: () => void;
 }
 
-export const PaletteList: FC<PaletteListProps> = ({ themes }) => {
+export const PaletteList: FC<PaletteListProps> = ({ themes, onSelect }) => {
   const { setTheme } = useThemeContext();
 
   return (
@@ -19,7 +20,10 @@ export const PaletteList: FC<PaletteListProps> = ({ themes }) => {
             key={`${name}-${index}`}
             text={name}
             theme={getUiTheme(theme)}
-            onClick={() => setTheme(theme)}
+            onClick={() => {
+              setTheme(theme);
+              onSelect();
+            }}
           />
         ))
       }

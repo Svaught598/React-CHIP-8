@@ -1,6 +1,6 @@
 declare global {
   interface CanvasRenderingContext2D {
-    renderPixels(pixelBuffer: number[], theme: Theme): void;
+    renderPixels(pixelBuffer: number[], theme: Theme, pixelSize: number): void;
     renderPaused(): void;
     renderSplash(): void;
   }

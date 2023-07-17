@@ -32,7 +32,7 @@ export const PaletteMaker: React.FC<PaletteMakerProps> = ({ closeModal }) => {
   return (
     <div className="absolute top-0 left-0 h-screen w-screen grid z-20">
       <div className="absolute opacity-80 bg-slate-950 w-full h-full"/>
-      <form className="relative flex flex-col gap-4 bg-slate-900 self-center border-slate-700 border-4 justify-self-center w-1/3 opacity-100 z-30 py-4 px-8" onSubmit={handleSubmit}>
+      <form className="relative flex flex-col gap-4 bg-slate-900 self-center border-slate-700 border-4 justify-self-center w-11/12 md:w-1/3 opacity-100 z-30 py-4 px-8" onSubmit={handleSubmit}>
         <button type="button" className="absolute top-0 right-2" onClick={closeModal}>
           <LayeredText fontSize="24px" text="X" />
         </button>

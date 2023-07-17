@@ -3,15 +3,18 @@ import { useEmulationContext } from "../../contexts/emulationContext";
 import { Button } from "../common/Button";
 import { CLASSIC_THEME, ROM_LIST } from "../../constants";
 
+type RomListProps = {
+  onSelect: () => void;
+}
 
-
-export const RomList: FC = () => {
+export const RomList: FC<RomListProps> = ({ onSelect }) => {
   const [rom, setRom] = useState<typeof ROM_LIST[number]>();
   const { setRom: loadRom } = useEmulationContext();
   const selector = useRef<HTMLSelectElement>(null);
 
   const selectRom = async (romName: typeof ROM_LIST[number]) => {
     setRom(romName);
+    onSelect();
     try {
       const romResponse = await fetch(`./roms/${romName}`);
       const romDataRaw = await romResponse.arrayBuffer();

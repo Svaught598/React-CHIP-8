@@ -14,11 +14,11 @@ export class Chip8KeyBoard {
   };
 
   constructor() {
-    window.addEventListener('keydown', (e) => this.setPressedKey(e));
-    window.addEventListener('keyup', (e) => this.setReleasedKey(e));
+    window.addEventListener('keydown', (e) => this.handleKeydown(e));
+    window.addEventListener('keyup', (e) => this.handleKeyup(e));
   }
 
-  private setPressedKey = (event: KeyboardEvent) => {
+  private handleKeydown = (event: KeyboardEvent) => {
     if (!KEYS.includes(event.key)) return;
     const index = KeyMapping[event.key];
     const newKeydownBuffer = [...this.keydownBuffer.curr];
@@ -27,9 +27,25 @@ export class Chip8KeyBoard {
     this.keydownBuffer.curr = newKeydownBuffer;
   }
 
-  private setReleasedKey = (event: KeyboardEvent) => {
+  private handleKeyup = (event: KeyboardEvent) => {
     if (!KEYS.includes(event.key)) return;
     const index = KeyMapping[event.key];
+    const newKeydownBuffer = [...this.keydownBuffer.curr];
+    newKeydownBuffer[index] = 0;
+    this.keydownBuffer.prev = this.keydownBuffer.curr;
+    this.keydownBuffer.curr = newKeydownBuffer;
+  }
+
+  public setKeydown = (key: string) => {
+    const index = KeyMapping[key];
+    const newKeydownBuffer = [...this.keydownBuffer.curr];
+    newKeydownBuffer[index] = 1;
+    this.keydownBuffer.prev = this.keydownBuffer.curr;
+    this.keydownBuffer.curr = newKeydownBuffer;
+  }
+
+  public setKeyup = (key: string) => {
+    const index = KeyMapping[key];
     const newKeydownBuffer = [...this.keydownBuffer.curr];
     newKeydownBuffer[index] = 0;
     this.keydownBuffer.prev = this.keydownBuffer.curr;

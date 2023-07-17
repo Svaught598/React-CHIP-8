@@ -5,16 +5,6 @@
 /** ==============================
  Fonts
 ============================== **/
-@font-face {
-    font-family: matchup-pro;
-    src: url('MatchupPro.eot') format('embedded-opentype'),
-        url('MatchupPro.woff2') format('woff2'),
-        url('MatchupPro.woff') format('woff'),
-        url('MatchupPro.ttf') format('truetype'),
-        url('MatchupPro.svg#MatchupPro') format('svg');
-    font-weight: normal;
-    font-style: normal;
-}
 
 @font-face {
     font-family: futile-pro;
@@ -26,40 +16,6 @@
     font-weight: normal;
     font-style: normal;
 }
-
-@font-face {
-    font-family: ex-pro;
-    src: url('ExpressionPro.eot') format('embedded-opentype'),
-        url('ExpressionPro.woff2') format('woff2'),
-        url('ExpressionPro.woff') format('woff'),
-        url('ExpressionPro.ttf') format('truetype'),
-        url('ExpressionPro.svg#ExpressionPro') format('svg');
-    font-weight: normal;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: eq-pro;
-    src: url('EquipmentPro.eot') format('embedded-opentype'),
-        url('EquipmentPro.woff2') format('woff2'),
-        url('EquipmentPro.woff') format('woff'),
-        url('EquipmentPro.ttf') format('truetype'),
-        url('EquipmentPro.svg#EquipmentPro') format('svg');
-    font-weight: normal;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: compass-pro;
-    src: url('CompassPro.eot') format('embedded-opentype'),
-        url('CompassPro.woff2') format('woff2'),
-        url('CompassPro.woff') format('woff'),
-        url('CompassPro.ttf') format('truetype'),
-        url('CompassPro.svg#CompassPro') format('svg');
-    font-weight: normal;
-    font-style: normal;
-}
-
 
 
 /** ==============================
@@ -88,18 +44,21 @@ body {
 /** ==============================
  Scrollbar
 ============================== **/
-::-webkit-scrollbar {
-    width: 10px;
-}
 
-::-webkit-scrollbar-track {
-    background: #0f172a;
-}
+@media screen and (min-width: 768px) {
+    ::-webkit-scrollbar {
+        width: 10px;
+    }
 
-::-webkit-scrollbar-thumb {
-    background: #475569;
-}
+    ::-webkit-scrollbar-track {
+        background: #0f172a;
+    }
 
-::-webkit-scrollbar-thumb:hover {
-    background: #94a3b8;
+    ::-webkit-scrollbar-thumb {
+        background: #475569;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+    }
 }

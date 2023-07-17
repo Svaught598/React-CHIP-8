@@ -23,17 +23,19 @@ export const Menu: React.FC = () => {
 
   return (
     <section className="flex flex-col gap-2 w-full">
-      <Button
-        text={ paused ? "Resume" : 'Pause Emulator' }
-        onClick={() => setPaused(isPaused => !isPaused)} 
-        theme={ CLASSIC_THEME } 
-      />
+      <div className="flex flex-row justify-between md:block">
+        <Button
+          text={ paused ? "Resume" : 'Pause Emulator' }
+          onClick={() => setPaused(isPaused => !isPaused)} 
+          theme={ CLASSIC_THEME } 
+        />
 
-      <Button
-        text="Create Palette"
-        onClick={ () => setOpenPaletteGenerator(true) } 
-        theme={ CLASSIC_THEME } 
-      />
+        <Button
+          text="Create Palette"
+          onClick={ () => setOpenPaletteGenerator(true) } 
+          theme={ CLASSIC_THEME } 
+        />
+      </div>
 
       <ExpansionList
         title="Palettes"
@@ -41,7 +43,7 @@ export const Menu: React.FC = () => {
         onClose={() => setOpenList(undefined)}
         onOpen={(title) => setOpenList(title)}
       >
-        <PaletteList themes={DEFAULT_THEMES}/>
+        <PaletteList onSelect={() => setOpenList(undefined)} themes={DEFAULT_THEMES}/>
       </ExpansionList>
       { (customThemes.length > 0) &&
         <ExpansionList
@@ -50,7 +52,7 @@ export const Menu: React.FC = () => {
           onClose={() => setOpenList(undefined)}
           onOpen={(title) => setOpenList(title)}
         >
-          <PaletteList themes={customThemes}/>
+          <PaletteList onSelect={() => setOpenList(undefined)} themes={customThemes}/>
         </ExpansionList>
       } 
       <ExpansionList 
@@ -59,7 +61,7 @@ export const Menu: React.FC = () => {
         onClose={() => setOpenList(undefined)}
         onOpen={(title) => setOpenList(title)}
       >
-        <RomList />
+        <RomList onSelect={() => setOpenList(undefined)} />
       </ExpansionList>
 
       <AnimatePresence>
