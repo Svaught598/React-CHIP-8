@@ -8,7 +8,6 @@ import { Keypad } from './components/Keypad'
 
 function App() {
   const breakpoint = useBreakpoint();
-  console.log('%cApp.tsx line:11 breakpoint', 'color: #26bfa5;', breakpoint);
 
   return (
     <EmulationProvider>

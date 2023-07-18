@@ -36,18 +36,16 @@ export class Chip8KeyBoard {
     this.keydownBuffer.curr = newKeydownBuffer;
   }
 
-  public setKeydown = (key: string) => {
-    const index = KeyMapping[key];
+  public setKeydown = (key: number) => {
     const newKeydownBuffer = [...this.keydownBuffer.curr];
-    newKeydownBuffer[index] = 1;
+    newKeydownBuffer[key] = 1;
     this.keydownBuffer.prev = this.keydownBuffer.curr;
     this.keydownBuffer.curr = newKeydownBuffer;
   }
 
-  public setKeyup = (key: string) => {
-    const index = KeyMapping[key];
+  public setKeyup = (key: number) => {
     const newKeydownBuffer = [...this.keydownBuffer.curr];
-    newKeydownBuffer[index] = 0;
+    newKeydownBuffer[key] = 0;
     this.keydownBuffer.prev = this.keydownBuffer.curr;
     this.keydownBuffer.curr = newKeydownBuffer;
   }
