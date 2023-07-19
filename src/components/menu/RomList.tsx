@@ -8,11 +8,11 @@ type RomListProps = {
 }
 
 export const RomList: FC<RomListProps> = ({ onSelect }) => {
-  const [rom, setRom] = useState<typeof ROM_LIST[number]>();
+  const [rom, setRom] = useState<string>();
   const { setRom: loadRom } = useEmulationContext();
   const selector = useRef<HTMLSelectElement>(null);
 
-  const selectRom = async (romName: typeof ROM_LIST[number]) => {
+  const selectRom = async (romName: string) => {
     setRom(romName);
     onSelect();
     try {
@@ -30,13 +30,13 @@ export const RomList: FC<RomListProps> = ({ onSelect }) => {
     <>
       <div className="h-96 overflow-y-auto flex flex-col gap-2 pr-2">     
         {
-          ROM_LIST.map((romName) => 
+          ROM_LIST.map((game) => 
             <Button
-              key={romName}
-              text={romName}
+              key={game.name}
+              text={game.name}
               theme={CLASSIC_THEME}
-              selected={rom === romName}
-              onClick={() => selectRom(romName)}
+              selected={rom === game.name}
+              onClick={() => selectRom(game.name)}
             />
           )
         }

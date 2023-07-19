@@ -1,5 +1,5 @@
 import { EmulatorState } from "./emulator";
-import { cls, ret, jp, call, se, sne, seVxVy, ldVx, addVx, ldVxVy, orVxVy, andVxVy, xorVxVy, addVxVy, subVxVy, shrVxVy, subnVxVy, shlVxVy, sneVxVy, ldIAddr, jpV0Addr, rndVxByte, drwVxVyNibble, skpVx, sknpVx, ldVxDT, ldVxK, ldDTVx, ldSTVx, addIVx, ldFVx, ldBVx, ldIVx, ldVxI } from "./opcode";
+import { cls, ret, jp, call, se, sne, seVxVy, ldVx, addVx, ldVxVy, orVxVy, andVxVy, xorVxVy, addVxVy, subVxVy, shrVxVy, subnVxVy, shlVxVy, sneVxVy, ldIAddr, jpV0Addr, rndVxByte, drwVxVyNibble, skpVx, sknpVx, ldVxDT, ldVxK, ldDTVx, ldSTVx, addIVx, ldFVx, ldBVx, ldIVx, ldVxI, scrollDown, scrollRight, scrollLeft, exit, disableExtended, enableExtended, ldFVx2, saveFlagsVx, loadFlagsVx } from "./opcode";
 
 /**
  * processes opcode and mutates state in-place
@@ -14,8 +14,26 @@ export const processOpcode = (state: EmulatorState): void => {
     if (fourthNibble.toHex() === '0') {
       cls(state)
     }
+    if (thirdNibble.toHex() === 'C') {
+      scrollDown(opcode, state)
+    }
     if (fourthNibble.toHex() === 'E') {
       ret(state)
+    }
+    if (thirdNibble.toHex() === 'F' && fourthNibble.toHex() === 'B') {
+      scrollRight(state);
+    }
+    if (thirdNibble.toHex() === 'F' && fourthNibble.toHex() === 'C') {
+      scrollLeft(state);
+    }
+    if (thirdNibble.toHex() === 'F' && fourthNibble.toHex() === 'D') {
+      exit(state)
+    }
+    if (thirdNibble.toHex() === 'F' && fourthNibble.toHex() === 'E') {
+      disableExtended(state)
+    }
+    if (thirdNibble.toHex() === 'F' && fourthNibble.toHex() === 'F') {
+      enableExtended(state)
     }
   }
   if (firstNibble.toHex() === '1') {
@@ -110,6 +128,9 @@ export const processOpcode = (state: EmulatorState): void => {
     if (thirdNibble.toHex() === '2' && fourthNibble.toHex() === '9') {
       ldFVx(opcode, state)
     }
+    if (thirdNibble.toHex() === '3' && fourthNibble.toHex() === '0') {
+      ldFVx2(opcode, state)
+    }
     if (thirdNibble.toHex() === '3' && fourthNibble.toHex() === '3') {
       ldBVx(opcode, state)
     }
@@ -118,6 +139,12 @@ export const processOpcode = (state: EmulatorState): void => {
     }
     if (thirdNibble.toHex() === '6' && fourthNibble.toHex() === '5') {
       ldVxI(opcode, state)
+    }
+    if (thirdNibble.toHex() === '7' && fourthNibble.toHex() === '5') {
+      saveFlagsVx(opcode, state)
+    }
+    if (thirdNibble.toHex() === '8' && fourthNibble.toHex() === '5') {
+      loadFlagsVx(opcode, state)
     }
   }
 }

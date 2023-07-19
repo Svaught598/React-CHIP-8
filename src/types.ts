@@ -1,6 +1,6 @@
 declare global {
   interface CanvasRenderingContext2D {
-    renderPixels(pixelBuffer: number[], theme: Theme, pixelSize: number): void;
+    renderPixels(pixelBuffer: number[], theme: Theme, height: number, width: number, pixelSize: number): void;
     renderPaused(): void;
     renderSplash(): void;
   }
@@ -26,4 +26,10 @@ export type NamedTheme = {
 export type MetaState = {
   theme?: Theme;
   paused?: boolean;
+  extendedMode?: boolean;
+}
+
+export type Game = {
+  name: string;
+  type: 'CHIP8' | 'SCHIP' | 'CHIP48';
 }

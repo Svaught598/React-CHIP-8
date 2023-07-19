@@ -18,7 +18,7 @@ export const Menu: React.FC = () => {
   const [openList, setOpenList] = useState<MenuItem | undefined>();
   const [openPaletteGenerator, setOpenPaletteGenerator] = useState<boolean>(false); 
   const { paused, setPaused } = useEmulationContext();
-  const { customThemes } = useThemeContext();
+  const { customThemes = [] } = useThemeContext();
 
 
   return (

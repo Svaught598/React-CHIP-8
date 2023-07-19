@@ -17,6 +17,21 @@ export const notImpl = (): void => {
   return;
 }
 
+// 00CN - Scroll display N lines down
+export const scrollDown = (opcode: number, state: EmulatorState): void => {
+  const [width, height] = state.getDimensions();
+  const linesToScroll = opcode & 0x000F;
+  const rowsToKeep = height - linesToScroll;
+
+  const newBuffer = [
+    ...new Array(width * linesToScroll).fill(0),
+    ...state.pixelBuffer.slice(0, width * rowsToKeep),
+  ];
+
+  state.pixelBuffer = newBuffer;
+  state.programCounter += 2;
+}
+
 // 00E0 - CLS
 export const cls = (state: EmulatorState): void => {
   for (let i=0; i<state.pixelBuffer.length; i++) {
@@ -35,6 +50,55 @@ export const ret = (state: EmulatorState): void => {
 
   state.programCounter = state.stack[state.stackPointer];
   state.stackPointer -= 1;
+}
+
+// 00FB - Scroll display 4 pixels right
+export const scrollRight = (state: EmulatorState): void => {
+  const [width, height] = state.getDimensions();
+  const newBuffer = [];
+  for (let row = 0; row < height; row++) {
+    const rowIndex = row * width;
+    const newRow = state.pixelBuffer.slice(rowIndex, rowIndex + width - 4);
+    newBuffer.push(...[0,0,0,0]);
+    newBuffer.push(...newRow);
+  }
+  state.pixelBuffer = newBuffer;
+  state.programCounter += 2;
+}
+
+// 00FC - Scroll display 4 pixels left
+export const scrollLeft = (state: EmulatorState): void => {
+  const [width, height] = state.getDimensions();
+  const newBuffer = [];
+  for (let row = 0; row < height; row++) {
+    const rowIndex = row * width;
+    const newRow = state.pixelBuffer.slice(rowIndex + 4, rowIndex + width);
+    newBuffer.push(...newRow);
+    newBuffer.push(...[0,0,0,0]);
+  }
+  state.pixelBuffer = newBuffer;
+  state.programCounter += 2;
+}
+
+// 00FD - Exit CHIP interpreter
+export const exit = (state: EmulatorState): void => {
+  state.meta.paused = true;
+}
+
+// 00FE - Disable extended screen mode
+export const disableExtended = (state: EmulatorState): void => {
+  state.meta.extendedMode = true;
+  const [width, height] = state.getDimensions();
+  state.pixelBuffer = new Array(height * width).fill(0);
+  state.programCounter += 2;
+}
+
+// 00FF - Enable extended screen mode for full-screen graphics
+export const enableExtended = (state: EmulatorState): void => {
+  state.meta.extendedMode = true;
+  const [width, height] = state.getDimensions();
+  state.pixelBuffer = new Array(height * width).fill(0);
+  state.programCounter += 2;
 }
 
 // 1nnn - JP addr
@@ -236,22 +300,68 @@ export const rndVxByte = (opcode: number, state: EmulatorState): void => {
 }
 
 // Dxyn - DRW Vx, Vy, nibble
+// If N=0 and extended mode, show 16x16 sprite.
 export const drwVxVyNibble = (opcode: number, state: EmulatorState): void => {
+  const [width, height] = state.getDimensions();
   const x = (opcode & 0x0F00) >> 8; 
   const y = (opcode & 0x00F0) >> 4;
-  const height = opcode & 0x000F;
-  const xPos = state.vRegisters[x] & 63;
-  const yPos = state.vRegisters[y] & 31;
-  state.vRegisters[0xF] = 0;
-  for (let yLine = 0; yLine < height; yLine++) {
-    const pixel = state.memory[state.indexRegister + yLine];
-    for (let xLine = 0; xLine < 8; xLine++) {
-      if ((pixel & (0x80 >> xLine)) !== 0) {
-        const index = (xPos + xLine + ((yPos + yLine) * 64));
-        if (state.pixelBuffer[index] === 1) {
-          state.vRegisters[0xF] = 1;
+  const drawHeight = opcode & 0x000F;
+  const xPos = state.vRegisters[x] & (width - 1);
+  const yPos = state.vRegisters[y] & (height - 1);
+
+  // super chip 16x16 sprites
+  if (drawHeight === 0) {
+
+    // hires
+    if (state.meta.extendedMode) {
+      state.vRegisters[0xF] = 0;
+      for (let yLine = 0; yLine < 16; yLine++) {
+        const pixelLeft = state.memory[state.indexRegister + yLine*2] & 0xFF;
+        const pixelRight = state.memory[state.indexRegister + yLine*2 + 1] & 0xFF;
+        const pixel = pixelRight + (pixelLeft << 8);
+        for (let xLine = 0; xLine < 16; xLine++) {
+          if ((pixel & (0x8000 >> xLine)) !== 0) {
+            const index = ((xPos + xLine) % width) + (((yPos + yLine) % height) * width);
+            if (state.pixelBuffer[index] === 1) {
+              state.vRegisters[0xF] = 1;
+            }
+            state.pixelBuffer[index] ^= 1;
+          }
         }
-        state.pixelBuffer[index] ^= 1;
+      }
+    }
+
+    // lores
+    else {
+      state.vRegisters[0xF] = 0;
+      for (let yLine = 0; yLine < 8; yLine++) {
+        const pixel = state.memory[state.indexRegister + yLine];
+        for (let xLine = 0; xLine < 16; xLine++) {
+          if ((pixel & (0x80 >> xLine)) !== 0) {
+            const index = ((xPos + xLine) % width) + (((yPos + yLine) % height) * width);
+            if (state.pixelBuffer[index] === 1) {
+              state.vRegisters[0xF] = 1;
+            }
+            state.pixelBuffer[index] ^= 1;
+          }
+        }
+      }
+    }
+  }
+
+  // normal chip8 draw
+  else {
+    state.vRegisters[0xF] = 0;
+    for (let yLine = 0; yLine < drawHeight; yLine++) {
+      const pixel = state.memory[state.indexRegister + yLine];
+      for (let xLine = 0; xLine < 8; xLine++) {
+        if ((pixel & (0x80 >> xLine)) !== 0) {
+          const index = ((xPos + xLine) % width) + (((yPos + yLine) % height) * width);
+          if (state.pixelBuffer[index] === 1) {
+            state.vRegisters[0xF] = 1;
+          }
+          state.pixelBuffer[index] ^= 1;
+        }
       }
     }
   }
@@ -326,6 +436,13 @@ export const ldFVx = (opcode: number, state: EmulatorState): void => {
   state.programCounter += 2;
 }
 
+// FX30 - Point I to 10-byte font sprite for digit VX (0..9)
+export const ldFVx2 = (opcode: number, state: EmulatorState): void => {
+  const x = (opcode & 0x0F00) >> 8; 
+  state.indexRegister = 0x50 + (state.vRegisters[x] * 10);
+  state.programCounter += 2;
+}
+
 // Fx33 - LD B, Vx
 export const ldBVx = (opcode: number, state: EmulatorState): void => {
   const x = (opcode & 0x0F00) >> 8; 
@@ -350,6 +467,24 @@ export const ldVxI = (opcode: number, state: EmulatorState): void => {
   const x = (opcode & 0x0F00) >> 8; 
   for (let i=0; i<=x; i++) {
     state.vRegisters[i] = state.memory[state.indexRegister + i];
+  }
+  state.programCounter += 2;
+}
+
+// FX75 - (saveflags vx) Save v0-vX to flag registers.
+export const saveFlagsVx = (opcode: number, state: EmulatorState): void => {
+  const x = (opcode & 0x0F00) >> 8;
+  for (let i=0; i<=x; i++) {
+    state.flags[i] = state.vRegisters[i];
+  }
+  state.programCounter += 2;
+}
+
+// FX85 - (loadflags vx) Restore v0-vX from flag registers.
+export const loadFlagsVx = (opcode: number, state: EmulatorState): void => {
+  const x = (opcode & 0x0F00) >> 8;
+  for (let i=0; i<=x; i++) {
+    state.vRegisters[i] = state.flags[i];
   }
   state.programCounter += 2;
 }

@@ -1,23 +1,27 @@
 import { CLASSIC_THEME, CHARS } from "../constants";
 import { MetaState } from "../types";
+import { pixelBufToRGBABuf } from "../utils";
 import { KeyBuffer } from "./keyboard";
 
 export class EmulatorState {
   timerTicks = 0;
-  memory = new Array(4096).fill(0);
-  stack =  new Array(16).fill(0);
-  vRegisters = new Array(16).fill(0);
+  memory = new Array<number>(4096).fill(0);
+  stack =  new Array<number>(16).fill(0);
+  vRegisters = new Array<number>(16).fill(0);
+  flags = new Array<number>(16).fill(0);
   soundTimer = 0;
   delayTimer = 0;
   programCounter = 512;
   stackPointer = 0;
-  pixelBuffer = new Array(64 * 32).fill(0);
+  pixelBuffer = new Array<number>(64 * 32).fill(0);
   drawFlag = false;
   indexRegister = 0;
   keydownBuffer: KeyBuffer = { prev: new Array(16).fill(0), curr: new Array(16).fill(0) };
+  screen = new ImageData(64, 32);
   meta: MetaState = {
     paused: false,
     theme: CLASSIC_THEME,
+    extendedMode: false,
   };
 
   loadRom(rom: number[]) {
@@ -25,6 +29,25 @@ export class EmulatorState {
     rom.forEach((byte, index) => {
       this.memory[index + 512] = byte;
     });
+    this.meta.extendedMode = false;
+  }
+
+  getDimensions(): [number, number] {
+    return (this.meta.extendedMode) ? [128, 64] : [64, 32];
+  }
+
+  getScreenBuffer(width: number, height: number): ImageData {
+    const theme = this.meta.theme || CLASSIC_THEME;
+    this.screen.data.set(
+      pixelBufToRGBABuf(
+        this.pixelBuffer, 
+        theme, 
+        ...this.getDimensions(), 
+        width, 
+        height
+      )
+    );
+    return this.screen;
   }
 
   reset() {

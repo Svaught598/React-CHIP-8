@@ -1,4 +1,4 @@
-import { FC, useEffect, useRef } from "react";
+import { FC, useEffect, useRef, useState } from "react";
 import { Theme } from "../types";
 import { useThemeContext } from "../contexts/themeContext";
 import { useEmulationContext } from "../contexts/emulationContext";
@@ -16,15 +16,18 @@ export const Canvas: FC = () => {
   // setup canvas width/height based on viewport
   const width = window.screen.availWidth < 640 ? window.screen.availWidth : 640
   const height = width / 2;
-  const pixelSize = width / 64;
 
+  useEffect(() => {
+    emulatorState.screen = new ImageData(width, height);
+  }, [height, width])
+  
   // setup emulator to run on component mount
   useEffect(() => {
     const state = setInterval(() => {
       const isPaused = emulatorState.meta.paused;
       emulatorState.keydownBuffer = keyboard.keydownBuffer;
       if (!isPaused) processOpcode(emulatorState);
-      ctx?.renderPixels(emulatorState.pixelBuffer, emulatorState.meta.theme ?? CLASSIC_THEME, pixelSize);
+      ctx?.putImageData(emulatorState.getScreenBuffer(width, height), 0, 0);
     }, CLOCK_INTERVAL);
 
     const timers = setInterval(() => {
@@ -38,7 +41,7 @@ export const Canvas: FC = () => {
       clearInterval(state);
       clearInterval(timers);
     }
-  }, [ctx, pixelSize]);
+  }, [ctx, width, height]);
 
   // load rom
   useEffect(() => {
@@ -68,16 +71,6 @@ export const Canvas: FC = () => {
     </div>
   )
 }
-
-CanvasRenderingContext2D.prototype.renderPixels =
-  function(pixelBuffer: number[], theme: Theme, pixelSize: number) {
-    for (let x = 0; x < 64; x++) {
-      for (let y = 0; y < 32; y++) {
-        this.fillStyle = pixelBuffer[y * 64 + x] ? theme.dark : theme.light;
-        this.fillRect(x * pixelSize, y * pixelSize, pixelSize, pixelSize);
-      }
-    }
-  }
 
 CanvasRenderingContext2D.prototype.renderPaused =
   function() {

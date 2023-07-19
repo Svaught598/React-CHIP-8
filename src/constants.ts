@@ -1,4 +1,4 @@
-import { NamedTheme } from "./types";
+import { Game, NamedTheme } from "./types";
 
 export const CUSTOM_THEMES_KEY = 'custom-themes';
 
@@ -37,35 +37,29 @@ export const DEFAULT_THEMES: NamedTheme[] = [
   },
 ];
 
-export const ROM_LIST = [
-  // "TEST",
-  // "TEST_FLAGS",
-  // "TEST_QUIRKS",
-  // "TEST_KEYS",
-  // "TEST_IBM",
-  "15PUZZLE",
-  "BLINKY",
-  "BLITZ",
-  "BRIX",
-  "CONNECT4",
-  "GUESS",
-  "HIDDEN",
-  "INVADERS",
-  "KALEID",
-  "MAZE",
-  "MERLIN",
-  "MISSILE",
-  "PONG",
-  "PONG2",
-  "PUZZLE",
-  "SYZYGY",
-  "TANK",
-  "TETRIS",
-  "TICTAC",
-  "UFO",
-  "VBRIX",
-  "VERS",
-  "WIPEOFF",
+export const ROM_LIST: readonly Game[] = [
+  // { name: "TEST", type: 'CHIP8' },
+  // { name: "TEST_FLAGS", type: 'CHIP8' },
+  // { name: "TEST_QUIRKS", type: 'CHIP8' },
+  // { name: "TEST_KEYS", type: 'CHIP8' },
+  // { name: "TEST_IBM", type: 'CHIP8' },
+  { name: "BRIX", type: 'CHIP8' },
+  { name: "INVADERS", type: 'CHIP8' },
+  { name: "MISSILE", type: 'CHIP8' },
+  { name: "PONG2", type: 'CHIP8' },
+  { name: "PUZZLE", type: 'CHIP8' },
+  { name: "TICTAC", type: 'CHIP8' },
+  { name: "UFO", type: 'CHIP8' },
+
+  { name: "RACE", type: 'SCHIP' },
+  { name: "ALIEN", type: 'SCHIP' },
+//   { name: "WORM3" , type: 'SCHIP' },
+//   { name: "BLINKY" , type: 'SCHIP' },
+//   { name: "FIELD" , type: 'SCHIP' },
+//   { name: "JOUST" , type: 'SCHIP' },
+//   { name: "PIPER" , type: 'SCHIP' },
+  { name: "SPACEFIG " , type: 'SCHIP' },
+//   { name: "UBOAT" , type: 'SCHIP' },
 ] as const;
 
 export const CLASSIC_THEME = {
@@ -91,6 +85,18 @@ export const CHARS: number[] = [
   0xe0,0x90,0x90,0x90,0xe0, // D
   0xf0,0x80,0xf0,0x80,0xf0, // E
   0xf0,0x80,0xf0,0x80,0x80, // F
+
+  // High res characters (16 x 16)
+  0x3C, 0x7E, 0xE7, 0xC3, 0xC3, 0xC3, 0xC3, 0xE7, 0x7E, 0x3C, // 0
+  0x18, 0x38, 0x58, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x3C, // 1
+  0x3E, 0x7F, 0xC3, 0x06, 0x0C, 0x18, 0x30, 0x60, 0xFF, 0xFF, // 2
+  0x3C, 0x7E, 0xC3, 0x03, 0x0E, 0x0E, 0x03, 0xC3, 0x7E, 0x3C, // 3
+  0x06, 0x0E, 0x1E, 0x36, 0x66, 0xC6, 0xFF, 0xFF, 0x06, 0x06, // 4
+  0xFF, 0xFF, 0xC0, 0xC0, 0xFC, 0xFE, 0x03, 0xC3, 0x7E, 0x3C, // 5
+  0x3E, 0x7C, 0xC0, 0xC0, 0xFC, 0xFE, 0xC3, 0xC3, 0x7E, 0x3C, // 6
+  0xFF, 0xFF, 0x03, 0x06, 0x0C, 0x18, 0x30, 0x60, 0x60, 0x60, // 7
+  0x3C, 0x7E, 0xC3, 0xC3, 0x7E, 0x7E, 0xC3, 0xC3, 0x7E, 0x3C, // 8
+  0x3C, 0x7E, 0xC3, 0xC3, 0x7F, 0x3F, 0x03, 0x03, 0x3E, 0x7C, // 9
 ];
 
 export const KeyMapping: { [k: string]: number } = {
@@ -113,9 +119,9 @@ export const KeyMapping: { [k: string]: number } = {
 } as const;
 
 // These numbers are not accurate to the original CHIP8 spec
-// because of perf issues with the emulator, but they give
-// a good approximation of the CHIP8 feel.
-export const CLOCK_FREQ = 500;
+// because of perf issues with the emulator
+// I just kinda made them up
+export const CLOCK_FREQ = 1000;
 export const CLOCK_INTERVAL = 1000 / CLOCK_FREQ;
-export const TIMER_FREQ = 30;
+export const TIMER_FREQ = 500;
 export const TIMER_INTERVAL = 1000 / TIMER_FREQ;
