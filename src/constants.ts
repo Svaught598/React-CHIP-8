@@ -59,7 +59,7 @@ export const ROM_LIST: readonly Game[] = [
 //   { name: "JOUST" , type: 'SCHIP' },
 //   { name: "PIPER" , type: 'SCHIP' },
   { name: "SPACEFIG " , type: 'SCHIP' },
-//   { name: "UBOAT" , type: 'SCHIP' },
+  { name: "EATY" , type: 'SCHIP' },
 ] as const;
 
 export const CLASSIC_THEME = {

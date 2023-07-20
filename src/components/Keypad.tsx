@@ -2,6 +2,10 @@ import { FC } from "react";
 import { keyboard } from "../core/core";
 import { useThemeContext } from "../contexts/themeContext";
 
+Number.prototype.toHex = function() {
+  return this.toString(16).toUpperCase();
+}
+
 const keys = [
   0x1, 0x2, 0x3, 0xC,
   0x4, 0x5, 0x6, 0xD,

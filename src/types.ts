@@ -1,4 +1,7 @@
 declare global {
+  interface Number {
+    toHex(): string;
+  }
   interface Array<T> {
     getAllIndexes(value: T): number[];
   }

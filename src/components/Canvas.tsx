@@ -1,9 +1,8 @@
 import { FC, useEffect, useRef } from "react";
 import { useThemeContext } from "../contexts/themeContext";
 import { useEmulationContext } from "../contexts/emulationContext";
-import { processOpcode } from "../core/process";
 import { CLOCK_INTERVAL } from "../constants";
-import { audio, emulatorState, keyboard } from "../core/core";
+import { emulatorState } from "../core/core";
 import { getRomData } from "../utils";
 
 
@@ -23,20 +22,8 @@ export const Canvas: FC = () => {
   
   // setup emulator to run on component mount
   useEffect(() => {
-    const state = setInterval(() => {
-      const isPaused = emulatorState.meta.paused;
-      emulatorState.keydownBuffer = keyboard.keydownBuffer;
-      if (!isPaused) processOpcode(emulatorState);
-      ctx?.putImageData(emulatorState.getScreenBuffer(width, height), 0, 0);
-    }, CLOCK_INTERVAL);
-
-    const timers = setInterval(() => {
-      if (emulatorState.delayTimer > 0) emulatorState.delayTimer -= 1;
-      if (emulatorState.soundTimer > 0) emulatorState.soundTimer -= 1;
-      if (emulatorState.soundTimer > 0) audio.play();
-      else audio.stop();
-    }, CLOCK_INTERVAL);
-
+    const state = setInterval(() => emulatorState.tick(width, height, ctx), CLOCK_INTERVAL);
+    const timers = setInterval(() => emulatorState.decrementTimers(), CLOCK_INTERVAL);
     return () => {
       clearInterval(state);
       clearInterval(timers);

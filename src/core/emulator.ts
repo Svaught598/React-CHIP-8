@@ -1,7 +1,9 @@
 import { CLASSIC_THEME, CHARS } from "../constants";
 import { MetaState } from "../types";
 import { pixelBufToRGBABuf } from "../utils";
+import { audio, keyboard } from "./core";
 import { KeyBuffer } from "./keyboard";
+import { processOpcode } from "./process";
 
 export class EmulatorState {
   timerTicks = 0;
@@ -62,5 +64,23 @@ export class EmulatorState {
     this.stack = new Array(16).fill(0);
     this.pixelBuffer = new Array(64 * 32).fill(0);
     this.keydownBuffer = { prev: new Array(16).fill(0), curr: new Array(16).fill(0) };
+  }
+
+  decrementTimers() {
+    if (this.delayTimer > 0) this.delayTimer -= 1;
+    if (this.soundTimer > 0) this.soundTimer -= 1;
+    if (this.soundTimer > 0) audio.play();
+    else audio.stop();
+  }
+
+  tick(width: number, height: number, ctx?: CanvasRenderingContext2D | null) {
+    const isPaused = this.meta.paused;
+    this.keydownBuffer = keyboard.keydownBuffer;
+    if (!isPaused) {
+      processOpcode(this);
+    }
+    if (this.drawFlag && !isPaused) {
+      ctx?.putImageData(this.getScreenBuffer(width, height), 0, 0);
+    }
   }
 }

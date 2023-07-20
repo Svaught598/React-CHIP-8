@@ -33,13 +33,8 @@ export const cls = (state: EmulatorState): void => {
 
 // 00EE - RET
 export const ret = (state: EmulatorState): void => {
-  if (state.stackPointer === -1) {
-    state.meta.paused = true;
-    throw new Error('Stack underflow.')
-  }
-
-  state.programCounter = state.stack[state.stackPointer];
   state.stackPointer -= 1;
+  state.programCounter = state.stack[state.stackPointer & 0xF];
 }
 
 // 00FB - Scroll display 4 pixels right
@@ -76,15 +71,15 @@ export const exit = (state: EmulatorState): void => {
 }
 
 // 00FE - Disable extended screen mode
-export const disableExtended = (state: EmulatorState): void => {
-  state.meta.extendedMode = true;
+export const lores = (state: EmulatorState): void => {
+  state.meta.extendedMode = false;
   const [width, height] = state.getDimensions();
   state.pixelBuffer = new Array(height * width).fill(0);
   state.programCounter += 2;
 }
 
 // 00FF - Enable extended screen mode for full-screen graphics
-export const enableExtended = (state: EmulatorState): void => {
+export const hires = (state: EmulatorState): void => {
   state.meta.extendedMode = true;
   const [width, height] = state.getDimensions();
   state.pixelBuffer = new Array(height * width).fill(0);
@@ -98,13 +93,8 @@ export const jp = (opcode: number, state: EmulatorState): void => {
 
 // 2nnn - CALL addr
 export const call = (opcode: number, state: EmulatorState): void => {
-  if (state.stackPointer === 15) {
-    state.meta.paused = true;
-    throw new Error('Stack overflow.')
-  }
-
+  state.stack[state.stackPointer & 0xF] = state.programCounter + 2;
   state.stackPointer += 1;
-  state.stack[state.stackPointer] = state.programCounter + 2;
   state.programCounter = opcode & 0x0FFF;
 }
 
@@ -216,7 +206,7 @@ export const subVxVy = (opcode: number, state: EmulatorState): void => {
   state.vRegisters[x] = (vx - vy) & 0xFF;
 
   // must happen last since vx could be vf
-  if (vx > vy) {
+  if (vx >= vy) {
     state.vRegisters[0xF] = 1;
   } else {
     state.vRegisters[0xF] = 0;
@@ -243,7 +233,7 @@ export const subnVxVy = (opcode: number, state: EmulatorState): void => {
   state.vRegisters[x] = (vy - vx) & 0xFF;
 
   // must happen last since vx could be vf
-  if (vy > vx) {
+  if (vy >= vx) {
     state.vRegisters[0xF] = 1;
   } else {
     state.vRegisters[0xF] = 0;
@@ -301,39 +291,18 @@ export const drwVxVyNibble = (opcode: number, state: EmulatorState): void => {
 
   // super chip 16x16 sprites
   if (drawHeight === 0) {
-
-    // hires
-    if (state.meta.extendedMode) {
-      state.vRegisters[0xF] = 0;
-      for (let yLine = 0; yLine < 16; yLine++) {
-        const pixelLeft = state.memory[state.indexRegister + yLine*2] & 0xFF;
-        const pixelRight = state.memory[state.indexRegister + yLine*2 + 1] & 0xFF;
-        const pixel = pixelRight + (pixelLeft << 8);
-        for (let xLine = 0; xLine < 16; xLine++) {
-          if ((pixel & (0x8000 >> xLine)) !== 0) {
-            const index = ((xPos + xLine) % width) + (((yPos + yLine) % height) * width);
-            if (state.pixelBuffer[index] === 1) {
-              state.vRegisters[0xF] = 1;
-            }
-            state.pixelBuffer[index] ^= 1;
+    state.vRegisters[0xF] = 0;
+    for (let yLine = 0; yLine < 16; yLine++) {
+      const pixelLeft = state.memory[state.indexRegister + yLine*2] & 0xFF;
+      const pixelRight = state.memory[state.indexRegister + yLine*2 + 1] & 0xFF;
+      const pixel = pixelRight + (pixelLeft << 8);
+      for (let xLine = 0; xLine < 16; xLine++) {
+        if ((pixel & (0x8000 >> xLine)) !== 0) {
+          const index = ((xPos + xLine) % width) + (((yPos + yLine) % height) * width);
+          if (state.pixelBuffer[index] === 1) {
+            state.vRegisters[0xF] = 1;
           }
-        }
-      }
-    }
-
-    // lores
-    else {
-      state.vRegisters[0xF] = 0;
-      for (let yLine = 0; yLine < 8; yLine++) {
-        const pixel = state.memory[state.indexRegister + yLine];
-        for (let xLine = 0; xLine < 16; xLine++) {
-          if ((pixel & (0x80 >> xLine)) !== 0) {
-            const index = ((xPos + xLine) % width) + (((yPos + yLine) % height) * width);
-            if (state.pixelBuffer[index] === 1) {
-              state.vRegisters[0xF] = 1;
-            }
-            state.pixelBuffer[index] ^= 1;
-          }
+          state.pixelBuffer[index] ^= 1;
         }
       }
     }
