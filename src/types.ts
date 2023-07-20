@@ -1,11 +1,4 @@
-import { ROM_LIST } from "./constants";
-
 declare global {
-  interface CanvasRenderingContext2D {
-    renderPixels(pixelBuffer: number[], theme: Theme, height: number, width: number, pixelSize: number): void;
-    renderPaused(): void;
-    renderSplash(): void;
-  }
   interface Number {
     toHex(): string;
   }

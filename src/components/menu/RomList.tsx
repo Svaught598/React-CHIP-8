@@ -2,7 +2,6 @@ import { FC, useRef, useState } from "react";
 import { useEmulationContext } from "../../contexts/emulationContext";
 import { Button } from "../common/Button";
 import { CLASSIC_THEME, ROM_LIST } from "../../constants";
-import { emulatorState } from "../../core/core";
 
 type RomListProps = {
   onSelect: () => void;

@@ -1,6 +1,6 @@
 import { CLASSIC_THEME, CHARS } from "../constants";
 import { MetaState } from "../types";
-import { getRomData, pixelBufToRGBABuf } from "../utils";
+import { pixelBufToRGBABuf } from "../utils";
 import { KeyBuffer } from "./keyboard";
 
 export class EmulatorState {
