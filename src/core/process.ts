@@ -10,141 +10,141 @@ export const processOpcode = (state: EmulatorState): void => {
   const thirdNibble = (opcode & 0x00F0) >> 4;
   const fourthNibble = opcode & 0x000F;
 
-  if (firstNibble.toHex() === '0') {
-    if (fourthNibble.toHex() === '0') {
-      cls(state)
+  if (firstNibble === 0x0) {
+    if (fourthNibble === 0x0) {
+      return cls(state)
     }
-    if (thirdNibble.toHex() === 'C') {
-      scrollDown(opcode, state)
+    if (thirdNibble === 0xC) {
+      return scrollDown(opcode, state)
     }
-    if (fourthNibble.toHex() === 'E') {
-      ret(state)
+    if (fourthNibble === 0xE) {
+      return ret(state)
     }
-    if (thirdNibble.toHex() === 'F' && fourthNibble.toHex() === 'B') {
-      scrollRight(state);
+    if (thirdNibble === 0xF && fourthNibble === 0xB) {
+      return scrollRight(state);
     }
-    if (thirdNibble.toHex() === 'F' && fourthNibble.toHex() === 'C') {
-      scrollLeft(state);
+    if (thirdNibble === 0xF && fourthNibble === 0xC) {
+      return scrollLeft(state);
     }
-    if (thirdNibble.toHex() === 'F' && fourthNibble.toHex() === 'D') {
-      exit(state)
+    if (thirdNibble === 0xF && fourthNibble === 0xD) {
+      return exit(state)
     }
-    if (thirdNibble.toHex() === 'F' && fourthNibble.toHex() === 'E') {
-      disableExtended(state)
+    if (thirdNibble === 0xF && fourthNibble === 0xE) {
+      return disableExtended(state)
     }
-    if (thirdNibble.toHex() === 'F' && fourthNibble.toHex() === 'F') {
-      enableExtended(state)
-    }
-  }
-  if (firstNibble.toHex() === '1') {
-    jp(opcode, state)
-  }
-  if (firstNibble.toHex() === '2') {
-    call(opcode, state)
-  }
-  if (firstNibble.toHex() === '3') {
-    se(opcode, state)
-  }
-  if (firstNibble.toHex() === '4') {
-    sne(opcode, state)
-  }
-  if (firstNibble.toHex() === '5') {
-    seVxVy(opcode, state)
-  }
-  if (firstNibble.toHex() === '6') {
-    ldVx(opcode, state)
-  }
-  if (firstNibble.toHex() === '7') {
-    addVx(opcode, state)
-  }
-  if (firstNibble.toHex() === '8') {
-    if (fourthNibble.toHex() === '0') {
-      ldVxVy(opcode, state)
-    }
-    if (fourthNibble.toHex() === '1') {
-      orVxVy(opcode, state)
-    }
-    if (fourthNibble.toHex() === '2') {
-      andVxVy(opcode, state)
-    }
-    if (fourthNibble.toHex() === '3') {
-      xorVxVy(opcode, state)
-    }
-    if (fourthNibble.toHex() === '4') {
-      addVxVy(opcode, state)
-    }
-    if (fourthNibble.toHex() === '5') {
-      subVxVy(opcode, state)
-    }
-    if (fourthNibble.toHex() === '6') {
-      shrVxVy(opcode, state)
-    }
-    if (fourthNibble.toHex() === '7') {
-      subnVxVy(opcode, state)
-    }
-    if (fourthNibble.toHex() === 'E') {
-      shlVxVy(opcode, state)
+    if (thirdNibble === 0xF && fourthNibble === 0xF) {
+      return enableExtended(state)
     }
   }
-  if (firstNibble.toHex() === '9') {
-    sneVxVy(opcode, state)
+  if (firstNibble === 0x1) {
+    return jp(opcode, state)
   }
-  if (firstNibble.toHex() === 'A') {
-    ldIAddr(opcode, state)
+  if (firstNibble === 0x2) {
+    return call(opcode, state)
   }
-  if (firstNibble.toHex() === 'B') {
-    jpV0Addr(opcode, state)
+  if (firstNibble === 0x3) {
+    return se(opcode, state)
   }
-  if (firstNibble.toHex() === 'C') {
-    rndVxByte(opcode, state)
+  if (firstNibble === 0x4) {
+    return sne(opcode, state)
   }
-  if (firstNibble.toHex() === 'D') {
-    drwVxVyNibble(opcode, state)
+  if (firstNibble === 0x5) {
+    return seVxVy(opcode, state)
   }
-  if (firstNibble.toHex() === 'E') {
-    if (thirdNibble.toHex() === '9' && fourthNibble.toHex() === 'E') {
-      skpVx(opcode, state)
+  if (firstNibble === 0x6) {
+    return ldVx(opcode, state)
+  }
+  if (firstNibble === 0x7) {
+    return addVx(opcode, state)
+  }
+  if (firstNibble === 0x8) {
+    if (fourthNibble === 0x0) {
+      return ldVxVy(opcode, state)
     }
-    if (thirdNibble.toHex() === 'A' && fourthNibble.toHex() === '1') {
-      sknpVx(opcode, state)
+    if (fourthNibble === 0x1) {
+      return orVxVy(opcode, state)
+    }
+    if (fourthNibble === 0x2) {
+      return andVxVy(opcode, state)
+    }
+    if (fourthNibble === 0x3) {
+      return xorVxVy(opcode, state)
+    }
+    if (fourthNibble === 0x4) {
+      return addVxVy(opcode, state)
+    }
+    if (fourthNibble === 0x5) {
+      return subVxVy(opcode, state)
+    }
+    if (fourthNibble === 0x6) {
+      return shrVxVy(opcode, state)
+    }
+    if (fourthNibble === 0x7) {
+      return subnVxVy(opcode, state)
+    }
+    if (fourthNibble === 0xE) {
+      return shlVxVy(opcode, state)
     }
   }
-  if (firstNibble.toHex() === 'F') {
-    if (thirdNibble.toHex() === '0' && fourthNibble.toHex() === '7') {
-      ldVxDT(opcode, state)
+  if (firstNibble === 0x9) {
+    return sneVxVy(opcode, state)
+  }
+  if (firstNibble === 0xA) {
+    return ldIAddr(opcode, state)
+  }
+  if (firstNibble === 0xB) {
+    return jpV0Addr(opcode, state)
+  }
+  if (firstNibble === 0xC) {
+    return rndVxByte(opcode, state)
+  }
+  if (firstNibble === 0xD) {
+    return drwVxVyNibble(opcode, state)
+  }
+  if (firstNibble === 0xE) {
+    if (thirdNibble === 0x9 && fourthNibble === 0xE) {
+      return skpVx(opcode, state)
     }
-    if (thirdNibble.toHex() === '0' && fourthNibble.toHex() === 'A') {
-      ldVxK(opcode, state)
+    if (thirdNibble === 0xA && fourthNibble === 0x1) {
+      return sknpVx(opcode, state)
     }
-    if (thirdNibble.toHex() === '1' && fourthNibble.toHex() === '5') {
-      ldDTVx(opcode, state)
+  }
+  if (firstNibble === 0xF) {
+    if (thirdNibble === 0x0 && fourthNibble === 0x7) {
+      return ldVxDT(opcode, state)
     }
-    if (thirdNibble.toHex() === '1' && fourthNibble.toHex() === '8') {
-      ldSTVx(opcode, state)
+    if (thirdNibble === 0x0 && fourthNibble === 0xA) {
+      return ldVxK(opcode, state)
     }
-    if (thirdNibble.toHex() === '1' && fourthNibble.toHex() === 'E') {
-      addIVx(opcode, state)
+    if (thirdNibble === 0x1 && fourthNibble === 0x5) {
+      return ldDTVx(opcode, state)
     }
-    if (thirdNibble.toHex() === '2' && fourthNibble.toHex() === '9') {
-      ldFVx(opcode, state)
+    if (thirdNibble === 0x1 && fourthNibble === 0x8) {
+      return ldSTVx(opcode, state)
     }
-    if (thirdNibble.toHex() === '3' && fourthNibble.toHex() === '0') {
-      ldFVx2(opcode, state)
+    if (thirdNibble === 0x1 && fourthNibble === 0xE) {
+      return addIVx(opcode, state)
     }
-    if (thirdNibble.toHex() === '3' && fourthNibble.toHex() === '3') {
-      ldBVx(opcode, state)
+    if (thirdNibble === 0x2 && fourthNibble === 0x9) {
+      return ldFVx(opcode, state)
     }
-    if (thirdNibble.toHex() === '5' && fourthNibble.toHex() === '5') {
-      ldIVx(opcode, state)
+    if (thirdNibble === 0x3 && fourthNibble === 0x0) {
+      return ldFVx2(opcode, state)
     }
-    if (thirdNibble.toHex() === '6' && fourthNibble.toHex() === '5') {
-      ldVxI(opcode, state)
+    if (thirdNibble === 0x3 && fourthNibble === 0x3) {
+      return ldBVx(opcode, state)
     }
-    if (thirdNibble.toHex() === '7' && fourthNibble.toHex() === '5') {
-      saveFlagsVx(opcode, state)
+    if (thirdNibble === 0x5 && fourthNibble === 0x5) {
+      return ldIVx(opcode, state)
     }
-    if (thirdNibble.toHex() === '8' && fourthNibble.toHex() === '5') {
-      loadFlagsVx(opcode, state)
+    if (thirdNibble === 0x6 && fourthNibble === 0x5) {
+      return ldVxI(opcode, state)
+    }
+    if (thirdNibble === 0x7 && fourthNibble === 0x5) {
+      return saveFlagsVx(opcode, state)
+    }
+    if (thirdNibble === 0x8 && fourthNibble === 0x5) {
+      return loadFlagsVx(opcode, state)
     }
   }
 }

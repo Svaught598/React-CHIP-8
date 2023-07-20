@@ -1,20 +1,10 @@
 import { EmulatorState } from "./emulator";
 
-
-Number.prototype.toHex = function() {
-  return this.toString(16).toUpperCase();
-}
-
 Array.prototype.getAllIndexes = function<T>(value: T) {
   return this.reduce((acc: number[], curr: T, index: number) => {
     if (curr === value) acc.push(index);
     return acc;
   } , []);
-}
-
-
-export const notImpl = (): void => {
-  return;
 }
 
 // 00CN - Scroll display N lines down
