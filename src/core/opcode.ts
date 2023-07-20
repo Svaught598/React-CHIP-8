@@ -217,9 +217,10 @@ export const subVxVy = (opcode: number, state: EmulatorState): void => {
 // 8xy6 - SHR Vx {, Vy}
 export const shrVxVy = (opcode: number, state: EmulatorState): void => {
   const x = (opcode & 0x0F00) >> 8; 
-  const vx = state.vRegisters[x];
-  state.vRegisters[x] = (vx >> 1) & 0xFF;
-  state.vRegisters[0xF] = vx & 0x1;
+  const y = (opcode & 0x00F0) >> 4;
+  const vy = state.vRegisters[y];
+  state.vRegisters[x] = (vy >> 1) & 0xFF;
+  state.vRegisters[0xF] = vy & 0x1;
   state.programCounter += 2;
 }
 
@@ -243,10 +244,11 @@ export const subnVxVy = (opcode: number, state: EmulatorState): void => {
 
 // 8xyE - SHL Vx {, Vy}
 export const shlVxVy = (opcode: number, state: EmulatorState): void => {
-  const x = (opcode & 0x0F00) >> 8; 
-  const vx = state.vRegisters[x];
-  state.vRegisters[x] = (vx << 1) & 0xFF;
-  state.vRegisters[0xF] = vx >> 7;
+  const x = (opcode & 0x0F00) >> 8;
+  const y = (opcode & 0x00F0) >> 4;
+  const vy = state.vRegisters[y];
+  state.vRegisters[x] = (vy << 1) & 0xFF;
+  state.vRegisters[0xF] = vy >> 7;
   state.programCounter += 2;
 }
 
@@ -418,6 +420,7 @@ export const ldIVx = (opcode: number, state: EmulatorState): void => {
   for (let i=0; i<=x; i++) {
     state.memory[state.indexRegister + i] = state.vRegisters[i];
   }
+  state.indexRegister += x + 1;
   state.programCounter += 2;
 }
 
@@ -427,6 +430,7 @@ export const ldVxI = (opcode: number, state: EmulatorState): void => {
   for (let i=0; i<=x; i++) {
     state.vRegisters[i] = state.memory[state.indexRegister + i];
   }
+  state.indexRegister += x + 1;
   state.programCounter += 2;
 }
 
