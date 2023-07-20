@@ -8,6 +8,13 @@ export function getUiTheme(theme: Theme): Theme {
   }
 }
 
+export async function getRomData(romName: string): Promise<number[]> {
+  const romResponse = await fetch(`./roms/${romName}`);
+  const romDataRaw = await romResponse.arrayBuffer();
+  const romData = Array.from(new Uint8Array(romDataRaw));
+  return romData;
+}
+
 // convert #RRGGBB to [r, g, b]
 export function colorStringToRGBA(color: string): [number, number, number, number] {
   const r = parseInt(color.slice(1, 3), 16);

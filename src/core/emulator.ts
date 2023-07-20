@@ -1,6 +1,6 @@
 import { CLASSIC_THEME, CHARS } from "../constants";
 import { MetaState } from "../types";
-import { pixelBufToRGBABuf } from "../utils";
+import { getRomData, pixelBufToRGBABuf } from "../utils";
 import { KeyBuffer } from "./keyboard";
 
 export class EmulatorState {
@@ -22,6 +22,7 @@ export class EmulatorState {
     paused: false,
     theme: CLASSIC_THEME,
     extendedMode: false,
+    romName: undefined,
   };
 
   loadRom(rom: number[]) {

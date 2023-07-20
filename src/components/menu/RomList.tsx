@@ -2,6 +2,7 @@ import { FC, useRef, useState } from "react";
 import { useEmulationContext } from "../../contexts/emulationContext";
 import { Button } from "../common/Button";
 import { CLASSIC_THEME, ROM_LIST } from "../../constants";
+import { emulatorState } from "../../core/core";
 
 type RomListProps = {
   onSelect: () => void;
@@ -9,18 +10,16 @@ type RomListProps = {
 
 export const RomList: FC<RomListProps> = ({ onSelect }) => {
   const [rom, setRom] = useState<string>();
-  const { setRom: loadRom } = useEmulationContext();
+  const { setRom: loadRom, setPaused } = useEmulationContext();
   const selector = useRef<HTMLSelectElement>(null);
 
   const selectRom = async (romName: string) => {
     setRom(romName);
     onSelect();
     try {
-      const romResponse = await fetch(`./roms/${romName}`);
-      const romDataRaw = await romResponse.arrayBuffer();
-      const romData = Array.from(new Uint8Array(romDataRaw));
-      loadRom(romData);
+      loadRom(romName);
       selector.current?.blur();
+      setPaused(false);
     } catch (error) {
       console.error(error);
     }
@@ -28,7 +27,7 @@ export const RomList: FC<RomListProps> = ({ onSelect }) => {
 
   return (
     <>
-      <div className="h-96 overflow-y-auto flex flex-col gap-2 pr-2">     
+      <div className="h-96 overflow-y-auto flex flex-col gap-2 pr-2 pb-4">     
         {
           ROM_LIST.map((game) => 
             <Button

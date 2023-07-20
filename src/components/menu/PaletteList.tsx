@@ -13,7 +13,7 @@ export const PaletteList: FC<PaletteListProps> = ({ themes, onSelect }) => {
   const { setTheme } = useThemeContext();
 
   return (
-    <div className="flex flex-col justify-evenly w-full my-2 gap-2">
+    <div className="flex flex-col justify-evenly w-full my-2 gap-2 pb-4">
       {
         themes.map(({ name, theme }, index) => (
           <ThemedButton

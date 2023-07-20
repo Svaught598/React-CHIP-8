@@ -8,6 +8,9 @@ import { CLASSIC_THEME, DEFAULT_THEMES } from "../../constants";
 import { PaletteMaker } from "../PaletteMaker";
 import { useThemeContext } from "../../contexts/themeContext";
 import { AnimatePresence, motion } from "framer-motion";
+import { GameControllerIcon, ListIcon, PauseIcon, PlayIcon, PlusIcon, RedoIcon } from "../icons/";
+import { BottomSheet } from "./BottomSheet";
+import { emulatorState } from "../../core/core";
 
 export type MenuItem = 
   | 'Palettes'
@@ -17,13 +20,21 @@ export type MenuItem =
 export const Menu: React.FC = () => {
   const [openList, setOpenList] = useState<MenuItem | undefined>();
   const [openPaletteGenerator, setOpenPaletteGenerator] = useState<boolean>(false); 
-  const { paused, setPaused } = useEmulationContext();
-  const { customThemes = [] } = useThemeContext();
+  const { paused, setPaused, setRom } = useEmulationContext();
+  const { customThemes = [], uiTheme } = useThemeContext();
+  const buttonStyles = {
+    backgroundColor: uiTheme.dark,
+    borderColor: uiTheme.light,
+  }
 
+  const resetRom = () => {
+    setRom(undefined);
+    setTimeout(() => setRom(emulatorState.meta.romName), 0);
+  }
 
   return (
-    <section className="flex flex-col gap-2 w-full">
-      <div className="flex flex-row justify-between md:block">
+    <>
+      <section className="hidden md:flex md:flex-col md:gap-2">
         <Button
           text={ paused ? "Resume" : 'Pause Emulator' }
           onClick={() => setPaused(isPaused => !isPaused)} 
@@ -35,34 +46,71 @@ export const Menu: React.FC = () => {
           onClick={ () => setOpenPaletteGenerator(true) } 
           theme={ CLASSIC_THEME } 
         />
-      </div>
-
-      <ExpansionList
-        title="Palettes"
-        openList={openList}
-        onClose={() => setOpenList(undefined)}
-        onOpen={(title) => setOpenList(title)}
-      >
-        <PaletteList onSelect={() => setOpenList(undefined)} themes={DEFAULT_THEMES}/>
-      </ExpansionList>
-      { (customThemes.length > 0) &&
         <ExpansionList
-          title="Custom Palettes"
+          title="Palettes"
           openList={openList}
           onClose={() => setOpenList(undefined)}
           onOpen={(title) => setOpenList(title)}
         >
-          <PaletteList onSelect={() => setOpenList(undefined)} themes={customThemes}/>
+          <PaletteList onSelect={() => setOpenList(undefined)} themes={DEFAULT_THEMES}/>
         </ExpansionList>
-      } 
-      <ExpansionList 
-        title="Games" 
-        openList={openList} 
-        onClose={() => setOpenList(undefined)}
-        onOpen={(title) => setOpenList(title)}
-      >
-        <RomList onSelect={() => setOpenList(undefined)} />
-      </ExpansionList>
+        { (customThemes.length > 0) &&
+          <ExpansionList
+            title="Custom Palettes"
+            openList={openList}
+            onClose={() => setOpenList(undefined)}
+            onOpen={(title) => setOpenList(title)}
+          >
+            <PaletteList onSelect={() => setOpenList(undefined)} themes={customThemes}/>
+          </ExpansionList>
+        } 
+        <ExpansionList 
+          title="Games" 
+          openList={openList} 
+          onClose={() => setOpenList(undefined)}
+          onOpen={(title) => setOpenList(title)}
+        >
+          <RomList onSelect={() => setOpenList(undefined)} />
+        </ExpansionList>
+      </section>
+
+      <section className="flex flex-row gap-2 md:hidden justify-between items-center mx-4">
+        <div className="flex flex-row gap-3">
+          <button className="p-2 border-4" style={buttonStyles} onClick={ () => resetRom() }>
+            <RedoIcon />
+          </button>
+          <button className="p-2 border-4" style={buttonStyles} onClick={ () => setPaused(p => !p) }>
+            { paused && <PlayIcon /> || <PauseIcon /> }
+          </button>
+        </div>
+
+        <div className="flex flex-row gap-3">
+          <button className="p-2 border-4" style={buttonStyles} onClick={ () => setOpenList(title => title === "Games" ? undefined : 'Games') }>
+            <GameControllerIcon />
+          </button>
+          <button className="p-2 border-4" style={buttonStyles} onClick={ () => setOpenList(title => title === "Palettes" ? undefined : 'Palettes') }>
+            <ListIcon />
+          </button>
+          <button className="p-2 border-4" style={buttonStyles} onClick={ () => setOpenPaletteGenerator(true) }>
+            <PlusIcon />
+          </button>
+        </div>
+
+        <BottomSheet
+          title="Games"
+          openList={openList}
+          onClose={() => setOpenList(undefined)}
+        >
+          <RomList onSelect={() => setOpenList(undefined)} />
+        </BottomSheet>
+        <BottomSheet
+          title="Palettes"
+          openList={openList}
+          onClose={() => setOpenList(undefined)}
+        >
+          <PaletteList onSelect={() => setOpenList(undefined)} themes={customThemes.concat(DEFAULT_THEMES)} />
+        </BottomSheet>
+      </section>
 
       <AnimatePresence>
         { openPaletteGenerator && 
@@ -76,6 +124,6 @@ export const Menu: React.FC = () => {
           </motion.div>
         }
       </AnimatePresence>
-    </section>
+    </>
   );
 }

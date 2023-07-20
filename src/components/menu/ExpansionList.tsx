@@ -28,12 +28,12 @@ export const ExpansionList: React.FC<PropsWithChildren<ExpansionListProps>> = ({
         <h2>{ title }</h2>
         <span>{ isOpen ? '-' : '+' }</span>
       </div>
-      <motion.div
-        initial={false}
-        animate={{ height: isOpen ? 'auto' : 0 }}
-        transition={{ duration: 0.3 }}
-        style={{ overflow: 'hidden' }}
-      >
+        <motion.div
+          initial={false}
+          animate={{ height: isOpen ? 'auto' : 0 }}
+          transition={{ duration: 0.3 }}
+          style={{ overflow: 'hidden' }}
+        >
         <AnimatePresence>{ children }</AnimatePresence>
       </motion.div>
     </div>

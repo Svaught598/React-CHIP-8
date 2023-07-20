@@ -18,7 +18,7 @@ export const Keypad: FC = () => {
   }
 
   return (
-    <div className="grid grid-cols-4 self-center pt-4 gap-2">
+    <div className="grid grid-cols-4 self-center pt-4 gap-2 md:hidden">
       { keys.map((key) => (
         <div key={key} className="col-span-1">
           <button

@@ -1,3 +1,5 @@
+import { ROM_LIST } from "./constants";
+
 declare global {
   interface CanvasRenderingContext2D {
     renderPixels(pixelBuffer: number[], theme: Theme, height: number, width: number, pixelSize: number): void;
@@ -27,6 +29,7 @@ export type MetaState = {
   theme?: Theme;
   paused?: boolean;
   extendedMode?: boolean;
+  romName?: string;
 }
 
 export type Game = {

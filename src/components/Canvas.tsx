@@ -1,10 +1,10 @@
-import { FC, useEffect, useRef, useState } from "react";
-import { Theme } from "../types";
+import { FC, useEffect, useRef } from "react";
 import { useThemeContext } from "../contexts/themeContext";
 import { useEmulationContext } from "../contexts/emulationContext";
 import { processOpcode } from "../core/process";
-import { CLASSIC_THEME, CLOCK_INTERVAL } from "../constants";
+import { CLOCK_INTERVAL } from "../constants";
 import { audio, emulatorState, keyboard } from "../core/core";
+import { getRomData } from "../utils";
 
 
 export const Canvas: FC = () => {
@@ -45,7 +45,12 @@ export const Canvas: FC = () => {
 
   // load rom
   useEffect(() => {
-    emulatorState.loadRom(rom);
+    if (!rom) return;
+    getRomData(rom).then((data) => {
+      emulatorState.loadRom(data);
+      emulatorState.meta.paused = false;
+      emulatorState.meta.romName = rom;
+    });
   }, [rom]);
 
   // pause
@@ -60,10 +65,13 @@ export const Canvas: FC = () => {
 
   return (
     <div className="relative mt-4 md:mt-0">
-      { paused && 
-        <div className="font-futile-pro text-4xl absolute top-0 left-0 bg-black opacity-50 h-full w-full flex justify-center items-center">
-          <h1>PAUSED</h1>
-        </div>
+      { paused &&
+        (<>
+          <div className="absolute top-0 left-0 bg-black opacity-50 h-full w-full" />
+          <div className="font-futile-pro text-4xl absolute top-0 left-0 h-full w-full flex justify-center items-center">
+            <h1 className="opacity-100 p-2" style={{ backgroundColor: theme.dark, color: theme.light }}>PAUSED</h1>
+          </div>
+        </>)
       }
       <div style={{ backgroundColor: theme.light, borderColor: theme.dark }} className="md:border-4 md:p-4">
         <canvas ref={canvas} width={width} height={height} />
@@ -71,14 +79,3 @@ export const Canvas: FC = () => {
     </div>
   )
 }
-
-CanvasRenderingContext2D.prototype.renderPaused =
-  function() {
-    this.fillStyle = 'rgba(0, 0, 0, 0.5)';
-    this.fillRect(0, 0, 640, 320);
-    this.fillStyle = 'white';
-    this.font = '48px futile-pro';
-    this.textAlign = 'center';
-    this.textBaseline = 'middle';
-    this.fillText('Paused', 320, 160);
-  }

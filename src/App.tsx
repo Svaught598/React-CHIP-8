@@ -18,9 +18,7 @@ function App() {
             <Canvas />
           </div>
           <Menu />
-          { (breakpoint === 'xs' || breakpoint === 'sm') &&
-            <Keypad />
-          }
+          <Keypad />
         </div>
       </ThemeProvider>
     </EmulationProvider>
