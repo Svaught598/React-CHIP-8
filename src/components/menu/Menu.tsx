@@ -10,7 +10,6 @@ import { useThemeContext } from "../../contexts/themeContext";
 import { AnimatePresence, motion } from "framer-motion";
 import { GameControllerIcon, ListIcon, PauseIcon, PlayIcon, PlusIcon, RedoIcon } from "../icons/";
 import { BottomSheet } from "./BottomSheet";
-import { emulatorState } from "../../core/core";
 
 export type MenuItem = 
   | 'Palettes'
@@ -20,7 +19,7 @@ export type MenuItem =
 export const Menu: React.FC = () => {
   const [openList, setOpenList] = useState<MenuItem | undefined>();
   const [openPaletteGenerator, setOpenPaletteGenerator] = useState<boolean>(false); 
-  const { paused, setPaused, setRom } = useEmulationContext();
+  const { paused, setPaused, setRom, rom } = useEmulationContext();
   const { customThemes = [], uiTheme } = useThemeContext();
   const buttonStyles = {
     backgroundColor: uiTheme.dark,
@@ -29,7 +28,7 @@ export const Menu: React.FC = () => {
 
   const resetRom = () => {
     setRom(undefined);
-    setTimeout(() => setRom(emulatorState.meta.romName), 0);
+    setTimeout(() => setRom(rom), 0);
   }
 
   return (
