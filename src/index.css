@@ -9,7 +9,6 @@
 @font-face {
     font-family: futile-pro;
     src: url('FutilePro.eot') format('embedded-opentype'),
-        url('FutilePro.woff2') format('woff2'),
         url('FutilePro.woff') format('woff'),
         url('FutilePro.ttf') format('truetype'),
         url('FutilePro.svg#FutilePro') format('svg');
