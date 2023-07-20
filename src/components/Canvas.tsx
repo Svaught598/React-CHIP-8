@@ -1,7 +1,7 @@
 import { FC, useEffect, useRef } from "react";
 import { useThemeContext } from "../contexts/themeContext";
 import { useEmulationContext } from "../contexts/emulationContext";
-import { CLOCK_INTERVAL } from "../constants";
+import { FRAME_INTERVAL } from "../constants";
 import { emulatorState } from "../core/core";
 import { getRomData } from "../utils";
 
@@ -22,21 +22,21 @@ export const Canvas: FC = () => {
   
   // setup emulator to run on component mount
   useEffect(() => {
-    const state = setInterval(() => emulatorState.tick(width, height, ctx), CLOCK_INTERVAL);
-    const timers = setInterval(() => emulatorState.decrementTimers(), CLOCK_INTERVAL);
-    return () => {
-      clearInterval(state);
-      clearInterval(timers);
-    }
+    const state = setInterval(() => {
+      emulatorState.tickFrame(width, height, ctx);
+      emulatorState.decrementTimers();
+    }, FRAME_INTERVAL);
+    return () => clearInterval(state);
   }, [ctx, width, height]);
 
   // load rom
   useEffect(() => {
     if (!rom) return;
-    getRomData(rom).then((data) => {
+    getRomData(rom.name).then((data) => {
       emulatorState.loadRom(data);
       emulatorState.meta.paused = false;
-      emulatorState.meta.romName = rom;
+      emulatorState.meta.romName = rom.name;
+      emulatorState.ipf = rom.ipf;
     });
   }, [rom]);
 

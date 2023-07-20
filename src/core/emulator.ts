@@ -7,6 +7,7 @@ import { processOpcode } from "./process";
 
 export class EmulatorState {
   timerTicks = 0;
+  ipf = 10;
   memory = new Array<number>(4096).fill(0);
   stack =  new Array<number>(16).fill(0);
   vRegisters = new Array<number>(16).fill(0);
@@ -73,14 +74,16 @@ export class EmulatorState {
     else audio.stop();
   }
 
-  tick(width: number, height: number, ctx?: CanvasRenderingContext2D | null) {
-    const isPaused = this.meta.paused;
-    this.keydownBuffer = keyboard.keydownBuffer;
-    if (!isPaused) {
+  tickFrame(width: number, height: number, ctx?: CanvasRenderingContext2D | null) {
+    if (this.meta.paused) return;
+
+    // process instructions for frame
+    for (let i = 0; i < this.ipf; i++) {
+      this.keydownBuffer = keyboard.keydownBuffer;
       processOpcode(this);
     }
-    if (this.drawFlag && !isPaused) {
-      ctx?.putImageData(this.getScreenBuffer(width, height), 0, 0);
-    }
+
+    // draw results
+    ctx?.putImageData(this.getScreenBuffer(width, height), 0, 0);
   }
 }

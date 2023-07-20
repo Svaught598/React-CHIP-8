@@ -13,6 +13,11 @@ export const processOpcode = (state: EmulatorState): void => {
   const n4 = opcode & 0x000F;
   const lowByte = opcode & 0x00FF;
 
+  console.log(`%c
+  opcode: ${opcode.toString(16).padStart(4, '0')}
+  pc: ${state.programCounter.toString(16).padStart(4, '0')}
+  `, 'color: #26bfa5;');
+
   switch (n1) {
     case 0x0: switch (n2) {
       case 0x0: switch (n3) {

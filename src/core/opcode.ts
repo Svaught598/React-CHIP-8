@@ -19,6 +19,7 @@ export const scrollDown = (opcode: number, state: EmulatorState): void => {
   ];
 
   state.pixelBuffer = newBuffer;
+  state.drawFlag = true;
   state.programCounter += 2;
 }
 
@@ -48,6 +49,7 @@ export const scrollRight = (state: EmulatorState): void => {
     newBuffer.push(...newRow);
   }
   state.pixelBuffer = newBuffer;
+  state.drawFlag = true;
   state.programCounter += 2;
 }
 
@@ -62,6 +64,7 @@ export const scrollLeft = (state: EmulatorState): void => {
     newBuffer.push(...[0,0,0,0]);
   }
   state.pixelBuffer = newBuffer;
+  state.drawFlag = true;
   state.programCounter += 2;
 }
 
@@ -217,10 +220,9 @@ export const subVxVy = (opcode: number, state: EmulatorState): void => {
 // 8xy6 - SHR Vx {, Vy}
 export const shrVxVy = (opcode: number, state: EmulatorState): void => {
   const x = (opcode & 0x0F00) >> 8; 
-  const y = (opcode & 0x00F0) >> 4;
-  const vy = state.vRegisters[y];
-  state.vRegisters[x] = (vy >> 1) & 0xFF;
-  state.vRegisters[0xF] = vy & 0x1;
+  const vx = state.vRegisters[x];
+  state.vRegisters[x] = (vx >> 1) & 0xFF;
+  state.vRegisters[0xF] = vx & 0x1;
   state.programCounter += 2;
 }
 
@@ -245,10 +247,9 @@ export const subnVxVy = (opcode: number, state: EmulatorState): void => {
 // 8xyE - SHL Vx {, Vy}
 export const shlVxVy = (opcode: number, state: EmulatorState): void => {
   const x = (opcode & 0x0F00) >> 8;
-  const y = (opcode & 0x00F0) >> 4;
-  const vy = state.vRegisters[y];
-  state.vRegisters[x] = (vy << 1) & 0xFF;
-  state.vRegisters[0xF] = vy >> 7;
+  const vx = state.vRegisters[x];
+  state.vRegisters[x] = (vx << 1) & 0xFF;
+  state.vRegisters[0xF] = vx >> 7;
   state.programCounter += 2;
 }
 

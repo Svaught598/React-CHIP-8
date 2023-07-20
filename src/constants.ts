@@ -38,28 +38,18 @@ export const DEFAULT_THEMES: NamedTheme[] = [
 ];
 
 export const ROM_LIST: readonly Game[] = [
-  // { name: "TEST", type: 'CHIP8' },
-  // { name: "TEST_FLAGS", type: 'CHIP8' },
-  // { name: "TEST_QUIRKS", type: 'CHIP8' },
-  // { name: "TEST_KEYS", type: 'CHIP8' },
-  // { name: "TEST_IBM", type: 'CHIP8' },
-  { name: "BRIX", type: 'CHIP8' },
-  { name: "INVADERS", type: 'CHIP8' },
-  { name: "MISSILE", type: 'CHIP8' },
-  { name: "PONG2", type: 'CHIP8' },
-  { name: "PUZZLE", type: 'CHIP8' },
-  { name: "TICTAC", type: 'CHIP8' },
-  { name: "UFO", type: 'CHIP8' },
-
-  { name: "RACE", type: 'SCHIP' },
-  { name: "ALIEN", type: 'SCHIP' },
-//   { name: "WORM3" , type: 'SCHIP' },
-//   { name: "BLINKY" , type: 'SCHIP' },
-//   { name: "FIELD" , type: 'SCHIP' },
-//   { name: "JOUST" , type: 'SCHIP' },
-//   { name: "PIPER" , type: 'SCHIP' },
-  { name: "SPACEFIG " , type: 'SCHIP' },
-  { name: "EATY" , type: 'SCHIP' },
+  { name: "BRIX", type: 'CHIP8', ipf: 10 },
+  { name: "INVADERS", type: 'CHIP8', ipf: 10 },
+  { name: "MISSILE", type: 'CHIP8', ipf: 10 },
+  { name: "PONG2", type: 'CHIP8', ipf: 10 },
+  { name: "PUZZLE", type: 'CHIP8', ipf: 10 },
+  { name: "TICTAC", type: 'CHIP8', ipf: 10 },
+  { name: "UFO", type: 'CHIP8', ipf: 10 },
+  { name: "RACE", type: 'SCHIP', ipf: 10 },
+  { name: "ALIEN", type: 'SCHIP', ipf: 30 },
+  { name: "SPACEFIG " , type: 'SCHIP', ipf: 100 },
+  { name: "EATY" , type: 'SCHIP', ipf: 800 },
+  { name: "SUB8", type: 'SCHIP', ipf: 100 },
 ] as const;
 
 export const CLASSIC_THEME = {
@@ -121,7 +111,5 @@ export const KeyMapping: { [k: string]: number } = {
 // These numbers are not accurate to the original CHIP8 spec
 // because of perf issues with the emulator
 // I just kinda made them up
-export const CLOCK_FREQ = 1000;
-export const CLOCK_INTERVAL = 1000 / CLOCK_FREQ;
-export const TIMER_FREQ = 500;
-export const TIMER_INTERVAL = 1000 / TIMER_FREQ;
+export const FRAME_FREQ = 60;
+export const FRAME_INTERVAL = 1000 / FRAME_FREQ;

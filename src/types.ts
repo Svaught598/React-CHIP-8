@@ -28,4 +28,5 @@ export type MetaState = {
 export type Game = {
   name: string;
   type: 'CHIP8' | 'SCHIP' | 'CHIP48';
+  ipf: number;
 }

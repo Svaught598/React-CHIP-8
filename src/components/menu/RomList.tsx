@@ -2,21 +2,22 @@ import { FC, useRef, useState } from "react";
 import { useEmulationContext } from "../../contexts/emulationContext";
 import { Button } from "../common/Button";
 import { CLASSIC_THEME, ROM_LIST } from "../../constants";
+import { Game } from "../../types";
 
 type RomListProps = {
   onSelect: () => void;
 }
 
 export const RomList: FC<RomListProps> = ({ onSelect }) => {
-  const [rom, setRom] = useState<string>();
+  const [selectedRom, setSelectedRom] = useState<Game>();
   const { setRom: loadRom, setPaused } = useEmulationContext();
   const selector = useRef<HTMLSelectElement>(null);
 
-  const selectRom = async (romName: string) => {
-    setRom(romName);
+  const selectRom = async (rom: Game) => {
+    setSelectedRom(rom);
     onSelect();
     try {
-      loadRom(romName);
+      loadRom(rom);
       selector.current?.blur();
       setPaused(false);
     } catch (error) {
@@ -33,8 +34,8 @@ export const RomList: FC<RomListProps> = ({ onSelect }) => {
               key={game.name}
               text={game.name}
               theme={CLASSIC_THEME}
-              selected={rom === game.name}
-              onClick={() => selectRom(game.name)}
+              selected={selectedRom?.name === game.name}
+              onClick={() => selectRom(game)}
             />
           )
         }
